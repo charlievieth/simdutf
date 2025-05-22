@@ -1,3 +1,5 @@
+//go:build !libsimdutf
+
 /* auto-generated on 2025-05-17 10:37:25 -0400. Do not edit! */
 /* begin file include/simdutf.h */
 #ifndef SIMDUTF_H

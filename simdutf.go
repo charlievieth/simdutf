@@ -1,3 +1,7 @@
+// Package simdutf is a Go wrapper around the [simdutf] Unicode validation and
+// transcoding library.
+//
+// [simdutf]: https://github.com/simdutf/simdutf/
 package simdutf
 
 // #cgo CFLAGS: -O2 -g

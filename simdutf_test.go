@@ -34,7 +34,7 @@ var validTests = []ValidTest{
 	{string("\xed\xbf\xbf"), false},         // U+DFFF low surrogate (sic)
 }
 
-func TestValidUTF8(t *testing.T) {
+func TestValid(t *testing.T) {
 	for _, tt := range validTests {
 		if Valid([]byte(tt.in)) != tt.out {
 			t.Errorf("Valid(%q) = %v; want %v", tt.in, !tt.out, tt.out)
@@ -43,6 +43,20 @@ func TestValidUTF8(t *testing.T) {
 			t.Errorf("ValidString(%q) = %v; want %v", tt.in, !tt.out, tt.out)
 		}
 	}
+}
+
+func TestValidAllocations(t *testing.T) {
+	t.Run("IsASCII", func(t *testing.T) {
+		p := []byte("你好世界, hello world. 你好世界, hello world. 你好世界, hello world.")
+		testing.AllocsPerRun(100, func() {
+			Valid(p)
+		})
+	})
+	t.Run("IsASCIIString", func(t *testing.T) {
+		testing.AllocsPerRun(100, func() {
+			ValidString("你好世界, hello world. 你好世界, hello world. 你好世界, hello world.")
+		})
+	})
 }
 
 // Reference isValidASCII function
@@ -55,7 +69,7 @@ func isValidASCII(s string) bool {
 	return true
 }
 
-func TestIsASCII8(t *testing.T) {
+func TestIsASCII(t *testing.T) {
 	for _, tt := range validTests {
 		want := isValidASCII(tt.in)
 		if IsASCII([]byte(tt.in)) != want {
@@ -65,6 +79,20 @@ func TestIsASCII8(t *testing.T) {
 			t.Errorf("IsASCIIString(%q) = %v; want %v", tt.in, !want, want)
 		}
 	}
+}
+
+func TestIsASCIIAllocations(t *testing.T) {
+	t.Run("IsASCII", func(t *testing.T) {
+		p := []byte("你好世界, hello world. 你好世界, hello world. 你好世界, hello world.")
+		testing.AllocsPerRun(100, func() {
+			IsASCII(p)
+		})
+	})
+	t.Run("IsASCIIString", func(t *testing.T) {
+		testing.AllocsPerRun(100, func() {
+			IsASCIIString("你好世界, hello world. 你好世界, hello world. 你好世界, hello world.")
+		})
+	})
 }
 
 func TestValidCalibration(t *testing.T) {

@@ -1,6 +1,8 @@
 package simdutf
 
 import (
+	"bytes"
+	"flag"
 	"fmt"
 	"sort"
 	"strings"
@@ -34,6 +36,18 @@ var validTests = []ValidTest{
 	{string("\xed\xbf\xbf"), false},         // U+DFFF low surrogate (sic)
 }
 
+func init() {
+	// Increase the length of test cases so that the input
+	// surpasses the pure-go/simdutf cutover.
+	prefix := strings.Repeat("#", 4096)
+	for _, t := range validTests {
+		validTests = append(validTests, ValidTest{
+			in:  prefix + t.in,
+			out: t.out,
+		})
+	}
+}
+
 func TestValid(t *testing.T) {
 	for _, tt := range validTests {
 		if Valid([]byte(tt.in)) != tt.out {
@@ -59,19 +73,14 @@ func TestValidAllocations(t *testing.T) {
 	})
 }
 
-// Reference isValidASCII function
-func isValidASCII(s string) bool {
-	for _, r := range s {
-		if r >= utf8.RuneSelf || r == utf8.RuneError {
-			return false
-		}
-	}
-	return true
-}
-
 func TestIsASCII(t *testing.T) {
-	for _, tt := range validTests {
-		want := isValidASCII(tt.in)
+	tests := validTests
+	s := strings.Repeat(" ", 18*1024)
+	for i := range 18 * 1024 {
+		tests = append(tests, ValidTest{in: s[i:], out: true})
+	}
+	for _, tt := range tests {
+		want := isASCIIString(tt.in)
 		if IsASCII([]byte(tt.in)) != want {
 			t.Errorf("IsASCII(%q) = %v; want %v", tt.in, !want, want)
 		}
@@ -95,10 +104,16 @@ func TestIsASCIIAllocations(t *testing.T) {
 	})
 }
 
+var calibrate = flag.Bool("calibrate", false, "Run calibration tests to "+
+	"determine the optimal go/simdutf cutoff")
+
 func TestValidCalibration(t *testing.T) {
+	if !*calibrate {
+		t.Skip("The -calibrate flag needs to be provided to run this test.")
+	}
 	bench := func(t *testing.T, name, prefix string) {
 		t.Run(name, func(t *testing.T) {
-			s := strings.Repeat(prefix, 2048)
+			s := bytes.Repeat([]byte(prefix), 2048)
 			// Find the point where the simdutf library is 10% faster than
 			// a pure Go implementation.
 			n := sort.Search(len(s), func(n int) bool {
@@ -106,18 +121,18 @@ func TestValidCalibration(t *testing.T) {
 					return true
 				}
 				s := s[:n]
-				bmstdlib := testing.Benchmark(func(b *testing.B) {
+				bmStdLib := testing.Benchmark(func(b *testing.B) {
 					for i := 0; i < b.N; i++ {
-						utf8.ValidString(s)
+						utf8.Valid(s)
 					}
 				})
-				bmsimd := testing.Benchmark(func(b *testing.B) {
+				bmSimd := testing.Benchmark(func(b *testing.B) {
 					for i := 0; i < b.N; i++ {
-						ValidString(s)
+						validateUTF8(&s[0], len(s))
 					}
 				})
-				fmt.Printf("  n=%d: stdlib=%d simdutf=%d\n", n, bmstdlib.NsPerOp(), bmsimd.NsPerOp())
-				return bmstdlib.NsPerOp()*100 > bmsimd.NsPerOp()*110
+				fmt.Printf("  n=%d: stdlib=%d simdutf=%d\n", n, bmStdLib.NsPerOp(), bmSimd.NsPerOp())
+				return bmStdLib.NsPerOp()*100 > bmSimd.NsPerOp()*110
 			})
 			fmt.Printf("calibration: %s brute-force cutoff = %d\n", name, n)
 		})
@@ -127,47 +142,41 @@ func TestValidCalibration(t *testing.T) {
 	bench(t, "ASCII", "a")
 }
 
-func isASCII(s string) bool {
-	for i := 0; i < len(s); i++ {
-		if s[i] >= utf8.RuneSelf {
-			return false
-		}
-	}
-	return true
-}
-
 func TestIsASCIICalibration(t *testing.T) {
-	t.Skip("FIXME: place non-ASCII rune at the end of search string")
-	bench := func(t *testing.T, name, prefix string) {
-		t.Run(name, func(t *testing.T) {
-			s := strings.Repeat(prefix, 2048)
-			// Find the point where the simdutf library is 10% faster than
-			// a pure Go implementation.
-			n := sort.Search(2048, func(n int) bool {
-				if n == 0 {
-					return true
-				}
-				s := s[:n]
-				bmstdlib := testing.Benchmark(func(b *testing.B) {
-					for i := 0; i < b.N; i++ {
-						isASCII(s)
-					}
-				})
-				bmsimd := testing.Benchmark(func(b *testing.B) {
-					for i := 0; i < b.N; i++ {
-						IsASCIIString(s)
-					}
-				})
-				fmt.Printf("  n=%d: stdlib=%d simdutf=%d\n", n, bmstdlib.NsPerOp(), bmsimd.NsPerOp())
-				return bmstdlib.NsPerOp()*100 > bmsimd.NsPerOp()*110
-			})
-			fmt.Printf("calibration: brute-force cutoff = %d\n", n)
-		})
+	if !*calibrate {
+		t.Skip("The -calibrate flag needs to be provided to run this test.")
 	}
-	// WARN: need to put the unicode rune at the end
-	// otherwise it succeeds immediately.
-	bench(t, "Unicode", "α")
-	bench(t, "ASCII", "a")
+
+	// Instead of just setting a single bit to >=128 use a valid
+	// UTF-8 sequence since that is more realistic and setting a
+	// single ivalid bit really hits the simdutf libs performance.
+	s := bytes.Repeat([]byte{'#'}, 16*1024)
+	copy(s[len(s)-len("α"):], "α")
+
+	// Use a binary search to find the point where the simdutf library is 10%
+	// faster than a pure Go implementation.
+	n := sort.Search(len(s), func(n int) bool {
+		if n == 0 {
+			return true
+		}
+		s := s[len(s)-n:]
+		if !utf8.Valid(s) {
+			t.Fatal("invalid utf8")
+		}
+		bmStdLib := testing.Benchmark(func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				isASCII(s)
+			}
+		})
+		bmSimd := testing.Benchmark(func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				validateASCII(&s[0], len(s))
+			}
+		})
+		fmt.Printf("  n=%d: stdlib=%d simdutf=%d\n", n, bmStdLib.NsPerOp(), bmSimd.NsPerOp())
+		return bmStdLib.NsPerOp()*100 > bmSimd.NsPerOp()*110
+	})
+	fmt.Printf("calibration: IsASCII cutoff = %d\n", n)
 }
 
 func BenchmarkValidUTF8(b *testing.B) {

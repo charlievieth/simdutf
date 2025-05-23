@@ -3,7 +3,7 @@ all: test
 
 .PHONY: test
 test:
-	@go test -cover -covermode=atomic ./...
+	@go test -v -cover -covermode=atomic ./...
 
 .PHONY: calibrate_valid
 calibrate_valid:

@@ -1,3 +1,5 @@
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/charlievieth/simdutf@master)
+
 # simdutf
 
 Package simdutf is a Go wrapper around the [simdutf](https://github.com/simdutf/simdutf/)

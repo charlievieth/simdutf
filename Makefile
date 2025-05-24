@@ -3,7 +3,7 @@ all: test
 
 .PHONY: test
 test:
-	@go test -v -cover -covermode=atomic ./...
+	@GOEXPERIMENT=cgocheck2 go test -v -cover -covermode=atomic ./...
 
 .PHONY: calibrate_valid
 calibrate_valid:

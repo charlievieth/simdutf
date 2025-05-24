@@ -5,6 +5,10 @@ all: test
 test:
 	@GOEXPERIMENT=cgocheck2 go test -v -cover -covermode=atomic ./...
 
+.PHONY: ci
+ci:
+	@GOEXPERIMENT=cgocheck2 go test -v -cover -covermode=atomic -coverprofile=coverage.txt ./...
+
 .PHONY: calibrate_valid
 calibrate_valid:
 	@go test -v -calibrate -run TestValidCalibration

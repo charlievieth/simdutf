@@ -1,5 +1,6 @@
 [![Tests](https://github.com/charlievieth/simdutf/actions/workflows/test.yml/badge.svg)](https://github.com/charlievieth/simdutf/actions/workflows/test.yml)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/charlievieth/simdutf@master)
+[![codecov](https://codecov.io/gh/charlievieth/simdutf/graph/badge.svg?token=66ZMOXC3F9)](https://codecov.io/gh/charlievieth/simdutf)
 
 # simdutf
 

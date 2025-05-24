@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 	"unicode/utf8"
@@ -180,21 +181,31 @@ func TestIsASCIICalibration(t *testing.T) {
 }
 
 func BenchmarkValidUTF8(b *testing.B) {
-	s := strings.Repeat("#", 2048)
-	b.SetBytes(int64(len(s)))
-	for i := 0; i < b.N; i++ {
-		if !ValidString(s) {
-			b.Fatal("FAIL")
-		}
+	s := strings.Repeat("#", 128*1024)
+	for n := 64; n <= len(s); n <<= 1 {
+		b.Run(strconv.Itoa(n), func(b *testing.B) {
+			b.SetBytes(int64(n))
+			p := s[:n]
+			for i := 0; i < b.N; i++ {
+				if !ValidString(p) {
+					b.Fatal("FAIL")
+				}
+			}
+		})
 	}
 }
 
 func BenchmarkIsASCII(b *testing.B) {
-	s := strings.Repeat("#", 2048*16)
-	b.SetBytes(int64(len(s)))
-	for i := 0; i < b.N; i++ {
-		if !IsASCIIString(s) {
-			b.Fatal("FAIL")
-		}
+	s := strings.Repeat("#", 128*1024)
+	for n := 64; n <= len(s); n <<= 1 {
+		b.Run(strconv.Itoa(n), func(b *testing.B) {
+			b.SetBytes(int64(n))
+			p := s[:n]
+			for i := 0; i < b.N; i++ {
+				if !IsASCIIString(p) {
+					b.Fatal("FAIL")
+				}
+			}
+		})
 	}
 }

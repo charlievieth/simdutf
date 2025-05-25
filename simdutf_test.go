@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"slices"
 	"sort"
-	"strconv"
 	"strings"
 	"testing"
 	"unicode/utf8"
@@ -180,32 +180,93 @@ func TestIsASCIICalibration(t *testing.T) {
 	fmt.Printf("calibration: IsASCII cutoff = %d\n", n)
 }
 
-func BenchmarkValidUTF8(b *testing.B) {
-	s := strings.Repeat("#", 128*1024)
-	for n := 64; n <= len(s); n <<= 1 {
-		b.Run(strconv.Itoa(n), func(b *testing.B) {
-			b.SetBytes(int64(n))
-			p := s[:n]
-			for i := 0; i < b.N; i++ {
-				if !ValidString(p) {
-					b.Fatal("FAIL")
-				}
+var longStringMostlyASCII string // ~100KB, ~97% ASCII
+var longStringJapanese string    // ~100KB, non-ASCII
+
+func init() {
+	const japanese = "日本語日本語日本語日"
+	var b strings.Builder
+	b.Grow(100_000)
+	for i := 0; b.Len() < 100_000; i++ {
+		if i%100 == 0 {
+			b.WriteString(japanese)
+		} else {
+			b.WriteString("0123456789")
+		}
+	}
+	longStringMostlyASCII = b.String()
+	longStringJapanese = strings.Repeat(japanese, 100_000/len(japanese))
+}
+
+var benchSizes = []int{10, 32, 64, 128, 256, 512, 4 << 10, 16 << 10, 4 << 20, 64 << 20}
+
+func valName(x int) string {
+	if s := x >> 20; s<<20 == x {
+		return fmt.Sprintf("%dM", s)
+	}
+	if s := x >> 10; s<<10 == x {
+		return fmt.Sprintf("%dK", s)
+	}
+	return fmt.Sprint(x)
+}
+
+var bmbuf []byte
+
+func benchBytes(b *testing.B, fn func(b *testing.B, buf []byte)) {
+	for _, n := range benchSizes {
+		b.Run(valName(n), func(b *testing.B) {
+			defer func() {
+				clear(bmbuf)
+				bmbuf = bmbuf[:cap(bmbuf)]
+			}()
+			if len(bmbuf) < n {
+				bmbuf = slices.Grow(bmbuf, n)
 			}
+			b.SetBytes(int64(n))
+			fn(b, bmbuf[:n:n])
 		})
 	}
 }
 
-func BenchmarkIsASCII(b *testing.B) {
-	s := strings.Repeat("#", 128*1024)
-	for n := 64; n <= len(s); n <<= 1 {
-		b.Run(strconv.Itoa(n), func(b *testing.B) {
-			b.SetBytes(int64(n))
-			p := s[:n]
-			for i := 0; i < b.N; i++ {
-				if !IsASCIIString(p) {
-					b.Fatal("FAIL")
+func BenchmarkValid(b *testing.B) {
+	fillBuffer := func(p []byte, src string) {
+		for n := 0; n < len(p); {
+			n += copy(p[n:], src)
+		}
+		// Since we may have copied only part of a UTF-8 encoded
+		// sequence we zero out the end of the buffer until it is
+		// valid.
+		for i := len(p) - 1; i >= 0 && !Valid(p); i-- {
+			p[i] = 0
+		}
+	}
+	bench := func(name, src string) {
+		b.Run(name, func(b *testing.B) {
+			benchBytes(b, func(b *testing.B, p []byte) {
+				if src != "" {
+					fillBuffer(p, src)
 				}
-			}
+				if !Valid(p) {
+					b.Fatal("bench buffer not valid")
+				}
+				for b.Loop() {
+					_ = Valid(p)
+				}
+			})
 		})
 	}
+	bench("ASCII", "")
+	bench("MostlyASCII", longStringMostlyASCII)
+	bench("Japanese", longStringJapanese)
+}
+
+func BenchmarkIsASCII(b *testing.B) {
+	benchBytes(b, func(b *testing.B, p []byte) {
+		if !IsASCII(p) {
+			b.Fatalf("bench buffer not valid: %q", bmbuf)
+		}
+		for b.Loop() {
+			_ = IsASCII(p)
+		}
+	})
 }

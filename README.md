@@ -13,7 +13,7 @@ You can check if your Go installation supports CGO by running: `go env CGO_ENABL
 By default, the bundled simdutf library is used. To link to a system installed
 simdutf library build this library with the `libsimdutf` build tag.
 
-### simdutf version
+## simdutf version
 
 This library bundles version 7.1.0 of [simdutf](https://github.com/simdutf/simdutf/).
 The [SIMDUTF_VERSION](./SIMDUTF_VERSION) file contains the current version of

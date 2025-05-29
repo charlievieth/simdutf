@@ -1,6 +1,6 @@
 //go:build !libsimdutf
 
-/* auto-generated on 2025-05-17 10:37:25 -0400. Do not edit! */
+/* auto-generated on 2025-05-28 18:43:22 -0400. Do not edit! */
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
 
@@ -2937,8 +2937,12 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
-#endif // SIMDUTF_FEATURE_BASE64
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 };
+#endif // SIMDUTF_FEATURE_BASE64
 
 } // namespace arm64
 } // namespace simdutf
@@ -3945,9 +3949,11 @@ template <> struct simd32<uint32_t> {
   }
 
   void dump() const {
+#ifdef SIMDUTF_LOGGING
     uint32_t temp[4];
     vst1q_u32(temp, value);
     printf("[%08x, %08x, %08x, %08x]\n", temp[0], temp[1], temp[2], temp[3]);
+#endif // SIMDUTF_LOGGING
   }
 
   // operators
@@ -4598,6 +4604,10 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 #endif // SIMDUTF_FEATURE_BASE64
 };
 
@@ -5182,6 +5192,10 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 #endif // SIMDUTF_FEATURE_BASE64
 };
 
@@ -5654,7 +5668,11 @@ template <typename T> struct simd8x64 {
     return simd8x64<bool>(this->chunks[0] > mask, this->chunks[1] > mask)
         .to_bitmask();
   }
-
+  simdutf_really_inline uint64_t eq(const T m) const {
+    const simd8<T> mask = simd8<T>::splat(m);
+    return simd8x64<bool>(this->chunks[0] == mask, this->chunks[1] == mask)
+        .to_bitmask();
+  }
   simdutf_really_inline uint64_t gteq_unsigned(const uint8_t m) const {
     const simd8<uint8_t> mask = simd8<uint8_t>::splat(m);
     return simd8x64<bool>((simd8<uint8_t>(__m256i(this->chunks[0])) >= mask),
@@ -5902,7 +5920,11 @@ template <typename T> struct simd16x32 {
     return simd16x32<bool>(this->chunks[0] <= mask, this->chunks[1] <= mask)
         .to_bitmask();
   }
-
+  simdutf_really_inline uint64_t eq(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] == mask, this->chunks[1] == mask)
+        .to_bitmask();
+  }
   simdutf_really_inline uint64_t not_in_range(const T low, const T high) const {
     const simd16<T> mask_low = simd16<T>::splat(static_cast<T>(low - 1));
     const simd16<T> mask_high = simd16<T>::splat(static_cast<T>(high + 1));
@@ -6436,6 +6458,10 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 #endif // SIMDUTF_FEATURE_BASE64
 };
 
@@ -6879,6 +6905,14 @@ template <typename T> struct simd8x64 {
                           this->chunks[2] > mask, this->chunks[3] > mask)
         .to_bitmask();
   }
+
+  simdutf_really_inline uint64_t eq(const T m) const {
+    const simd8<T> mask = simd8<T>::splat(m);
+    return simd8x64<bool>(this->chunks[0] == mask, this->chunks[1] == mask,
+                          this->chunks[2] == mask, this->chunks[3] == mask)
+        .to_bitmask();
+  }
+
   simdutf_really_inline uint64_t gteq_unsigned(const uint8_t m) const {
     const simd8<uint8_t> mask = simd8<uint8_t>::splat(m);
     return simd8x64<bool>(simd8<uint8_t>(__m128i(this->chunks[0])) >= mask,
@@ -7101,6 +7135,13 @@ template <typename T> struct simd16x32 {
     const simd16<T> mask = simd16<T>::splat(m);
     return simd16x32<bool>(this->chunks[0] <= mask, this->chunks[1] <= mask,
                            this->chunks[2] <= mask, this->chunks[3] <= mask)
+        .to_bitmask();
+  }
+
+  simdutf_really_inline uint64_t eq(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] == mask, this->chunks[1] == mask,
+                           this->chunks[2] == mask, this->chunks[3] == mask)
         .to_bitmask();
   }
 
@@ -7658,15 +7699,24 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 #endif // SIMDUTF_FEATURE_BASE64
 
 #ifdef SIMDUTF_INTERNAL_TESTS
   virtual std::vector<TestProcedure> internal_tests() const override;
 #endif
+#if SIMDUTF_FEATURE_UTF16
+
   void to_well_formed_utf16be(const char16_t *input, size_t len,
                               char16_t *output) const noexcept final;
   void to_well_formed_utf16le(const char16_t *input, size_t len,
                               char16_t *output) const noexcept final;
+#endif
 };
 
 } // namespace ppc64
@@ -8400,7 +8450,12 @@ template <typename T> struct simd8x64 {
                           this->chunks[2] > mask, this->chunks[3] > mask)
         .to_bitmask();
   }
-
+  simdutf_really_inline uint64_t eq(const T m) const {
+    const simd8<T> mask = simd8<T>::splat(m);
+    return simd8x64<bool>(this->chunks[0] == mask, this->chunks[1] == mask,
+                          this->chunks[2] == mask, this->chunks[3] == mask)
+        .to_bitmask();
+  }
   simdutf_really_inline uint64_t gteq_unsigned(const uint8_t m) const {
     const simd8<uint8_t> mask = simd8<uint8_t>::splat(m);
     return simd8x64<bool>(simd8<uint8_t>(this->chunks[0]) >= mask,
@@ -8724,6 +8779,13 @@ template <typename T> struct simd16x32 {
     const simd16<T> mask = simd16<T>::splat(m);
     return simd16x32<bool>(this->chunks[0] <= mask, this->chunks[1] <= mask,
                            this->chunks[2] <= mask, this->chunks[3] <= mask)
+        .to_bitmask();
+  }
+
+  simdutf_really_inline uint64_t eq(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] == mask, this->chunks[1] == mask,
+                           this->chunks[2] == mask, this->chunks[3] == mask)
         .to_bitmask();
   }
 
@@ -9396,6 +9458,11 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 #endif // SIMDUTF_FEATURE_BASE64
 private:
   const bool _supports_zvbb;
@@ -9862,6 +9929,10 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 #endif // SIMDUTF_FEATURE_BASE64
 };
 
@@ -11134,6 +11205,10 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
 #endif // SIMDUTF_FEATURE_BASE64
 };
 
@@ -12664,6 +12739,11 @@ public:
           last_chunk_handling_options::loose) const noexcept;
   size_t binary_to_base64(const char *input, size_t length, char *output,
                           base64_options options) const noexcept;
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept;
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept;
+
 #endif // SIMDUTF_FEATURE_BASE64
 };
 } // namespace fallback
@@ -13235,6 +13315,14 @@ template <endianness big_endian> bool is_low_surrogate(char16_t c) {
   return (0xdc00 <= c && c <= 0xdfff);
 }
 
+simdutf_really_inline bool high_surrogate(char16_t c) {
+  return (0xd800 <= c && c <= 0xdbff);
+}
+
+simdutf_really_inline bool low_surrogate(char16_t c) {
+  return (0xdc00 <= c && c <= 0xdfff);
+}
+
 // variable templates are a C++14 extension
 template <endianness big_endian> char16_t replacement() {
   return !match_system(big_endian) ? scalar::u16_swap_bytes(0xfffd) : 0xfffd;
@@ -13383,6 +13471,7 @@ simdutf_really_inline size_t utf8_length_from_latin1(const char *buf,
 #ifndef SIMDUTF_BASE64_H
 #define SIMDUTF_BASE64_H
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -13499,6 +13588,18 @@ reduced_input find_end(const char_type *src, size_t srclen,
   size_t full_input_length = srclen;
   size_t equallocation =
       srclen; // location of the first padding character if any
+  if (ignore_garbage) {
+    // Technically, we don't need to find the first padding character, we can
+    // just change our algorithms, but it adds substantial complexity.
+    auto it = simdutf::find(src, src + srclen, '=');
+    if (it != src + srclen) {
+      equallocation = it - src;
+      equalsigns = 1;
+      srclen = equallocation;
+      full_input_length = equallocation + 1;
+    }
+    return {equalsigns, equallocation, srclen, full_input_length};
+  }
   if (!ignore_garbage && srclen > 0 && src[srclen - 1] == '=') {
     // This is the last '=' sign.
     equallocation = srclen - 1;
@@ -13654,15 +13755,16 @@ full_result base64_tail_decode_impl(
           return {BASE64_INPUT_REMAINDER, size_t(src - srcinit),
                   size_t(dst - dstinit), true};
         } else
-          // The idea here is that in stop_before_partial mode, we stop right
-          // away if we have a partial chunk that would be valid.
-          if (last_chunk_options ==
-                  last_chunk_handling_options::stop_before_partial &&
-              (idx >= 2 ||
-               padding_characters ==
-                   0)) { // There are two cases where stop_before_partial
-                         // succeeds: either we have idx >= 2 or we have
-                         // padding_characters == 0
+          // If there is a partial chunk with insufficient padding, with
+          // stop_before_partial, we need to just ignore it. In "only full"
+          // mode, skip the minute there are padding characters.
+          if ((last_chunk_options ==
+                   last_chunk_handling_options::stop_before_partial &&
+               (padding_characters + idx < 4) &&
+               (idx >= 2 || padding_characters == 0)) ||
+              (last_chunk_options ==
+                   last_chunk_handling_options::only_full_chunks &&
+               (idx >= 2 || padding_characters == 0))) {
             // Rewind src to before partial chunk
 
             // partial means that we are *not* going to consume the read
@@ -13724,10 +13826,8 @@ full_result base64_tail_decode_impl(
               }
               dst += 2;
             } else if (!ignore_garbage && idx == 1 &&
-                       (last_chunk_options !=
-                            last_chunk_handling_options::stop_before_partial ||
-                        (last_chunk_options ==
-                             last_chunk_handling_options::stop_before_partial &&
+                       (!is_partial(last_chunk_options) ||
+                        (is_partial(last_chunk_options) &&
                          padding_characters > 0))) {
               return {BASE64_INPUT_REMAINDER, size_t(src - srcinit),
                       size_t(dst - dstinit)};
@@ -13793,11 +13893,14 @@ patch_tail_result(full_result r, size_t previous_input, size_t previous_output,
     r.input_count = equallocation;
   }
 
-  if (r.error == error_code::SUCCESS &&
-      last_chunk_options != stop_before_partial) {
-    // A success when we are not in stop_before_partial mode.
-    // means that we have consumed the whole input buffer.
-    r.input_count = full_input_length;
+  if (r.error == error_code::SUCCESS) {
+    if (!is_partial(last_chunk_options)) {
+      // A success when we are not in stop_before_partial mode.
+      // means that we have consumed the whole input buffer.
+      r.input_count = full_input_length;
+    } else if (r.output_count % 3 != 0) {
+      r.input_count = full_input_length;
+    }
   }
   return r;
 }
@@ -13908,8 +14011,8 @@ simdutf_warn_unused full_result base64_to_binary_details_impl(
       output, input, length, equalsigns, options, last_chunk_options);
   r = scalar::base64::patch_tail_result(r, 0, 0, equallocation,
                                         full_input_length, last_chunk_options);
-  if (last_chunk_options != stop_before_partial &&
-      r.error == error_code::SUCCESS && equalsigns > 0 && !ignore_garbage) {
+  if (!is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+      equalsigns > 0 && !ignore_garbage) {
     // additional checks
     if ((r.output_count % 3 == 0) ||
         ((r.output_count % 3) + 1 + equalsigns != 4)) {
@@ -13944,8 +14047,8 @@ simdutf_warn_unused full_result base64_to_binary_details_safe_impl(
       output, outlen, input, length, equalsigns, options, last_chunk_options);
   r = scalar::base64::patch_tail_result(r, 0, 0, equallocation,
                                         full_input_length, last_chunk_options);
-  if (last_chunk_options != stop_before_partial &&
-      r.error == error_code::SUCCESS && equalsigns > 0 && !ignore_garbage) {
+  if (!is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+      equalsigns > 0 && !ignore_garbage) {
     // additional checks
     if ((r.output_count % 3 == 0) ||
         ((r.output_count % 3) + 1 + equalsigns != 4)) {
@@ -14517,12 +14620,18 @@ inline size_t convert(const char16_t *buf, size_t len, char *utf8_output) {
   return utf8_output - start;
 }
 
-template <endianness big_endian>
-inline result convert_with_errors(const char16_t *buf, size_t len,
-                                  char *utf8_output) {
+template <endianness big_endian, bool check_output = false>
+inline full_result convert_with_errors(const char16_t *buf, size_t len,
+                                       char *utf8_output, size_t utf8_len = 0) {
   const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
+  if (check_output && utf8_len == 0) {
+    return full_result(error_code::OUTPUT_BUFFER_TOO_SMALL, 0, 0);
+  }
+
   size_t pos = 0;
   char *start{utf8_output};
+  char *end{utf8_output + utf8_len};
+
   while (pos < len) {
     // try to convert the next block of 8 bytes
     if (pos + 4 <=
@@ -14538,6 +14647,10 @@ inline result convert_with_errors(const char16_t *buf, size_t len,
                                ? char(u16_swap_bytes(buf[pos]))
                                : char(buf[pos]);
           pos++;
+          if (check_output && size_t(end - utf8_output) == 0) {
+            return full_result(error_code::OUTPUT_BUFFER_TOO_SMALL, pos,
+                               utf8_output - start);
+          }
         }
         continue;
       }
@@ -14548,34 +14661,52 @@ inline result convert_with_errors(const char16_t *buf, size_t len,
       // will generate one UTF-8 bytes
       *utf8_output++ = char(word);
       pos++;
+      if (check_output && size_t(end - utf8_output) == 0) {
+        return full_result(error_code::OUTPUT_BUFFER_TOO_SMALL, pos,
+                           utf8_output - start);
+      }
     } else if ((word & 0xF800) == 0) {
       // will generate two UTF-8 bytes
       // we have 0b110XXXXX 0b10XXXXXX
+      if (check_output && size_t(end - utf8_output) < 2) {
+        return full_result(error_code::OUTPUT_BUFFER_TOO_SMALL, pos,
+                           utf8_output - start);
+      }
       *utf8_output++ = char((word >> 6) | 0b11000000);
       *utf8_output++ = char((word & 0b111111) | 0b10000000);
       pos++;
+
     } else if ((word & 0xF800) != 0xD800) {
       // will generate three UTF-8 bytes
       // we have 0b1110XXXX 0b10XXXXXX 0b10XXXXXX
+      if (check_output && size_t(end - utf8_output) < 3) {
+        return full_result(error_code::OUTPUT_BUFFER_TOO_SMALL, pos,
+                           utf8_output - start);
+      }
       *utf8_output++ = char((word >> 12) | 0b11100000);
       *utf8_output++ = char(((word >> 6) & 0b111111) | 0b10000000);
       *utf8_output++ = char((word & 0b111111) | 0b10000000);
       pos++;
     } else {
+
+      if (check_output && size_t(end - utf8_output) < 4) {
+        return full_result(error_code::OUTPUT_BUFFER_TOO_SMALL, pos,
+                           utf8_output - start);
+      }
       // must be a surrogate pair
       if (pos + 1 >= len) {
-        return result(error_code::SURROGATE, pos);
+        return full_result(error_code::SURROGATE, pos, utf8_output - start);
       }
       uint16_t diff = uint16_t(word - 0xD800);
       if (diff > 0x3FF) {
-        return result(error_code::SURROGATE, pos);
+        return full_result(error_code::SURROGATE, pos, utf8_output - start);
       }
       uint16_t next_word = !match_system(big_endian)
                                ? u16_swap_bytes(data[pos + 1])
                                : data[pos + 1];
       uint16_t diff2 = uint16_t(next_word - 0xDC00);
       if (diff2 > 0x3FF) {
-        return result(error_code::SURROGATE, pos);
+        return full_result(error_code::SURROGATE, pos, utf8_output - start);
       }
       uint32_t value = (diff << 10) + diff2 + 0x10000;
       // will generate four UTF-8 bytes
@@ -14587,7 +14718,13 @@ inline result convert_with_errors(const char16_t *buf, size_t len,
       pos += 2;
     }
   }
-  return result(error_code::SUCCESS, utf8_output - start);
+  return full_result(error_code::SUCCESS, pos, utf8_output - start);
+}
+
+template <endianness big_endian>
+inline result simple_convert_with_errors(const char16_t *buf, size_t len,
+                                         char *utf8_output) {
+  return convert_with_errors<big_endian, false>(buf, len, utf8_output, 0);
 }
 
 } // namespace utf16_to_utf8
@@ -17115,6 +17252,16 @@ public:
                           base64_options options) const noexcept override {
     return set_best()->binary_to_base64(input, length, output, options);
   }
+
+  const char *find(const char *start, const char *end,
+                   char character) const noexcept override {
+    return set_best()->find(start, end, character);
+  }
+
+  const char16_t *find(const char16_t *start, const char16_t *end,
+                       char16_t character) const noexcept override {
+    return set_best()->find(start, end, character);
+  }
 #endif // SIMDUTF_FEATURE_BASE64
 
   simdutf_really_inline
@@ -17625,6 +17772,13 @@ public:
                           base64_options) const noexcept override {
     return 0;
   }
+  const char *find(const char *, const char *, char) const noexcept override {
+    return nullptr;
+  }
+  const char16_t *find(const char16_t *, const char16_t *,
+                       char16_t) const noexcept override {
+    return nullptr;
+  }
 #endif // SIMDUTF_FEATURE_BASE64
 
   unsupported_implementation()
@@ -18048,6 +18202,62 @@ simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t *buf,
   return convert_utf16le_to_utf8(buf, len, utf8_buffer);
   #endif
 }
+
+simdutf_warn_unused size_t
+convert_utf16_to_utf8_safe(const char16_t *buf, size_t len, char *utf8_output,
+                           size_t utf8_len) noexcept {
+  const auto start{utf8_output};
+  // We might be able to go faster by first scanning the input buffer to
+  // determine how many char16_t characters we can read without exceeding the
+  // utf8_len. This is a one-pass algorithm that has the benefit of not
+  // requiring a first pass to determine the length.
+  while (true) {
+    // The worst case for convert_utf16_to_utf8 is when you go from 1 char16_t
+    // to 3 characters of UTF-8. So we can read at most utf8_len / 3 char16_t
+    // characters.
+    auto read_len = std::min(len, utf8_len / 3);
+    if (read_len <= 16) {
+      break;
+    }
+    if (read_len < len) {
+      //  If we have a high surrogate at the end of the buffer, we need to
+      //  either read one more char16_t or backtrack.
+      if (scalar::utf16::high_surrogate(buf[read_len - 1])) {
+        read_len--;
+      }
+    }
+    if (read_len == 0) {
+      // If we cannot read anything, we are done.
+      break;
+    }
+    const auto write_len =
+        simdutf::convert_utf16_to_utf8(buf, read_len, utf8_output);
+    if (write_len == 0) {
+      // There was an error in the conversion, we cannot continue.
+      return 0; // indicating failure
+    }
+
+    utf8_output += write_len;
+    utf8_len -= write_len;
+    buf += read_len;
+    len -= read_len;
+  }
+  #if SIMDUTF_IS_BIG_ENDIAN
+  full_result r =
+      scalar::utf16_to_utf8::convert_with_errors<endianness::BIG, true>(
+          buf, len, utf8_output, utf8_len);
+  #else
+  full_result r =
+      scalar::utf16_to_utf8::convert_with_errors<endianness::LITTLE, true>(
+          buf, len, utf8_output, utf8_len);
+  #endif
+  if (r.error != error_code::SUCCESS &&
+      r.error != error_code::OUTPUT_BUFFER_TOO_SMALL) {
+    // If there was an error, we return 0 to indicate failure.
+    return 0; // indicating failure
+  }
+  return r.output_count + (utf8_output - start);
+}
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
@@ -18446,6 +18656,15 @@ simdutf_warn_unused size_t utf32_length_from_utf8(const char *input,
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_BASE64
+simdutf_warn_unused const char *find(const char *start, const char *end,
+                                     char character) noexcept {
+  return get_default_implementation()->find(start, end, character);
+}
+simdutf_warn_unused const char16_t *
+find(const char16_t *start, const char16_t *end, char16_t character) noexcept {
+  return get_default_implementation()->find(start, end, character);
+}
+
 simdutf_warn_unused size_t
 maximal_binary_length_from_base64(const char *input, size_t length) noexcept {
   return get_default_implementation()->maximal_binary_length_from_base64(
@@ -18494,8 +18713,7 @@ simdutf_warn_unused result slow_base64_to_binary_safe_impl(
 
   // The parameters of base64_tail_decode_safe are:
   // - dst: the output buffer
-  // - outlen: the size of the output buffer, modified to the number of
-  //   bytes written to the output buffer
+  // - outlen: the size of the output buffer
   // - srcr: the input buffer
   // - length: the size of the input buffer
   // - padded_characters: the number of padding characters
@@ -18505,13 +18723,13 @@ simdutf_warn_unused result slow_base64_to_binary_safe_impl(
   // and the number of bytes read from the input buffer.
   // The function will also return an error code if the input buffer is not
   // valid base64.
-  auto r = scalar::base64::base64_tail_decode_safe(
+  full_result r = scalar::base64::base64_tail_decode_safe(
       output, outlen, input, length, equalsigns, options, last_chunk_options);
   r = scalar::base64::patch_tail_result(r, 0, 0, equallocation,
                                         full_input_length, last_chunk_options);
   outlen = r.output_count;
-  if (last_chunk_options != stop_before_partial &&
-      r.error == error_code::SUCCESS && equalsigns > 0) {
+  if (!is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+      equalsigns > 0) {
     // additional checks
     if ((outlen % 3 == 0) || ((outlen % 3) + 1 + equalsigns != 4)) {
       r.error = error_code::INVALID_BASE64_CHARACTER;
@@ -18551,7 +18769,6 @@ simdutf_warn_unused result base64_to_binary_safe_impl(
     base64_options options,
     last_chunk_handling_options last_chunk_handling_options,
     bool decode_up_to_bad_char) noexcept {
-
   static_assert(std::is_same<chartype, char>::value ||
                     std::is_same<chartype, char16_t>::value,
                 "Only char and char16_t are supported.");
@@ -18570,12 +18787,11 @@ simdutf_warn_unused result base64_to_binary_safe_impl(
           input + input_position, safe_input, output + output_position, options,
           done_with_partial
               ? last_chunk_handling_options
-              : simdutf::last_chunk_handling_options::stop_before_partial);
+              : simdutf::last_chunk_handling_options::only_full_chunks);
   simdutf_log_assert(r.input_count <= safe_input,
                      "You should not read more than safe_input");
   simdutf_log_assert(r.output_count <= remaining_output_length,
                      "You should not write more than remaining_output_length");
-
   // Technically redundant, but we want to be explicit about it.
   input_position += r.input_count;
   output_position += r.output_count;
@@ -21504,6 +21720,81 @@ compress_decode_base64(char *dst, const char_type *src, size_t srclen,
   return {SUCCESS, srclen, size_t(dst - dstinit)};
 }
 /* end file src/arm64/arm_base64.cpp */
+/* begin file src/arm64/arm_find.cpp */
+
+simdutf_really_inline const char *util_find(const char *start, const char *end,
+                                            char character) noexcept {
+  // Handle empty or invalid range
+  if (start >= end)
+    return end;
+
+  // Process 16 bytes (128 bits) at a time with NEON
+  const size_t step = 16;
+  uint8x16_t char_vec = vdupq_n_u8(static_cast<uint8_t>(character));
+
+  // Main loop for full 16-byte chunks
+  while (size_t(end - start) >= step) {
+    uint8x16_t data = vld1q_u8(reinterpret_cast<const uint8_t *>(start));
+    uint8x16_t cmp = vceqq_u8(data, char_vec);
+    uint64_t mask = vget_lane_u64(
+        vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp), 4)), 0);
+
+    if (mask != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(mask) / 4; // Each character maps to 4 bits
+      return start + index;
+    }
+
+    start += step;
+  }
+
+  // Handle remaining bytes with scalar loop
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+
+  return end;
+}
+
+simdutf_really_inline const char16_t *util_find(const char16_t *start,
+                                                const char16_t *end,
+                                                char16_t character) noexcept {
+  // Handle empty or invalid range
+  if (start >= end)
+    return end;
+
+  // Process 8 char16_t (16 bytes, 128 bits) at a time with NEON
+  const size_t step = 8;
+  uint16x8_t char_vec = vdupq_n_u16(character);
+
+  // Main loop for full 8-element chunks
+  while (size_t(end - start) >= step) {
+    uint16x8_t data = vld1q_u16(reinterpret_cast<const uint16_t *>(start));
+    uint16x8_t cmp = vceqq_u16(data, char_vec);
+    uint64_t mask = vget_lane_u64(
+        vreinterpret_u64_u16(vshrn_n_u32(vreinterpretq_u32_u16(cmp), 4)), 0);
+
+    if (mask != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(mask) / 8; // Each character maps to 8 bits
+      return start + index;
+    }
+
+    start += step;
+  }
+
+  // Handle remaining elements with scalar loop
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+
+  return end;
+}
+/* end file src/arm64/arm_find.cpp */
 #endif // SIMDUTF_FEATURE_BASE64
 #if SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_LATIN1
 /* begin file src/arm64/arm_convert_utf32_to_latin1.cpp */
@@ -25277,6 +25568,16 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
                                         base64_options options) const noexcept {
   return encode_base64(output, input, length, options);
 }
+
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return util_find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return util_find(start, end, character);
+}
 #endif // SIMDUTF_FEATURE_BASE64
 
 } // namespace arm64
@@ -25842,6 +26143,16 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
                                         char *output,
                                         base64_options options) const noexcept {
   return scalar::base64::tail_encode_base64(output, input, length, options);
+}
+
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return std::find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return std::find(start, end, character);
 }
 #endif // SIMDUTF_FEATURE_BASE64
 
@@ -29780,6 +30091,7 @@ full_result
 compress_decode_base64(char *dst, const chartype *src, size_t srclen,
                        base64_options options,
                        last_chunk_handling_options last_chunk_options) {
+
   (void)options;
   const uint8_t *to_base64 =
       default_or_url ? tables::base64::to_base64_default_or_url_value
@@ -29910,15 +30222,16 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
         dst += output_len;
         return {BASE64_INPUT_REMAINDER, equallocation, size_t(dst - dstinit)};
       } else
-        // The idea here is that in stop_before_partial mode, we stop right away
-        // if we have a partial chunk that would be valid.
-        if (last_chunk_options ==
-                last_chunk_handling_options::stop_before_partial &&
-            (idx >= 2 ||
-             padding_characters ==
-                 0)) { // There are two cases where stop_before_partial
-                       // succeeds: either we have idx >= 2 or we have
-                       // padding_characters == 0
+        // If there is a partial chunk with insufficient padding, with
+        // stop_before_partial, we need to just ignore it. In "only full" mode,
+        // skip the minute there are padding characters.
+        if ((last_chunk_options ==
+                 last_chunk_handling_options::stop_before_partial &&
+             (padding_characters + idx < 4) &&
+             (idx >= 2 || padding_characters == 0)) ||
+            (last_chunk_options ==
+                 last_chunk_handling_options::only_full_chunks &&
+             (idx >= 2 || padding_characters == 0))) {
           _mm512_mask_storeu_epi8((__m512i *)dst, output_mask, shuffled);
           dst += output_len;
           // we need to rewind src to before the partial chunk
@@ -29967,10 +30280,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
             _mm512_mask_storeu_epi8((__m512i *)dst, output_mask, shuffled);
             dst += output_len;
           } else if (!ignore_garbage && idx == 1 &&
-                     (last_chunk_options !=
-                          last_chunk_handling_options::stop_before_partial ||
-                      (last_chunk_options ==
-                           last_chunk_handling_options::stop_before_partial &&
+                     (!is_partial(last_chunk_options) ||
+                      (is_partial(last_chunk_options) &&
                        padding_characters > 0))) {
             _mm512_mask_storeu_epi8((__m512i *)dst, output_mask, shuffled);
             dst += output_len;
@@ -29986,7 +30297,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
             dst += output_len;
           }
         }
-    if (!ignore_garbage && last_chunk_options != stop_before_partial &&
+
+    if (!ignore_garbage && !is_partial(last_chunk_options) &&
         padding_characters > 0) {
       size_t output_count = size_t(dst - dstinit);
       if ((output_count % 3 == 0) ||
@@ -29994,7 +30306,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
         return {INVALID_BASE64_CHARACTER, equallocation, output_count};
       }
     }
-    return {SUCCESS, size_t(src - srcinit), size_t(dst - dstinit)};
+    return {SUCCESS, full_input_length, size_t(dst - dstinit)};
   }
 
   if (!ignore_garbage && padding_characters > 0) {
@@ -30006,6 +30318,101 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   return {SUCCESS, srclen, size_t(dst - dstinit)};
 }
 /* end file src/icelake/icelake_base64.inl.cpp */
+/* begin file src/icelake/icelake_find.inl.cpp */
+
+simdutf_really_inline const char *util_find(const char *start, const char *end,
+                                            char character) noexcept {
+  // Handle empty or invalid range
+  if (start >= end)
+    return end;
+
+  // Process 64 bytes (512 bits) at a time with AVX-512
+  const size_t step = 64;
+  __m512i char_vec = _mm512_set1_epi8(character);
+
+  // Main loop for full 64-byte chunks
+  while (size_t(end - start) >= step) {
+    __m512i data = _mm512_loadu_si512(reinterpret_cast<const __m512i *>(start));
+    __mmask64 mask = _mm512_cmpeq_epi8_mask(data, char_vec);
+
+    if (mask != 0) {
+      // Found a match, return the first one
+      size_t index = _tzcnt_u64(mask);
+      return start + index;
+    }
+
+    start += step;
+  }
+
+  // Handle remaining bytes with masked load
+  size_t remaining = end - start;
+  if (remaining > 0) {
+    // Create a mask for the remaining bytes using shifted 0xFFFFFFFFFFFFFFFF
+    __mmask64 load_mask = 0xFFFFFFFFFFFFFFFF >> (64 - remaining);
+    __m512i data = _mm512_maskz_loadu_epi8(
+        load_mask, reinterpret_cast<const __m512i *>(start));
+    __mmask64 match_mask = _mm512_cmpeq_epi8_mask(data, char_vec);
+
+    // Apply load mask to avoid false positives
+    match_mask &= load_mask;
+
+    if (match_mask != 0) {
+      // Found a match in the remaining bytes
+      size_t index = _tzcnt_u64(match_mask);
+      return start + index;
+    }
+  }
+
+  return end;
+}
+
+simdutf_really_inline const char16_t *util_find(const char16_t *start,
+                                                const char16_t *end,
+                                                char16_t character) noexcept {
+  // Handle empty or invalid range
+  if (start >= end)
+    return end;
+
+  // Process 32 char16_t (64 bytes, 512 bits) at a time with AVX-512
+  const size_t step = 32;
+  __m512i char_vec = _mm512_set1_epi16(character);
+
+  // Main loop for full 32-element chunks
+  while (size_t(end - start) >= step) {
+    __m512i data = _mm512_loadu_si512(reinterpret_cast<const __m512i *>(start));
+    __mmask32 mask = _mm512_cmpeq_epi16_mask(data, char_vec);
+
+    if (mask != 0) {
+      // Found a match, return the first one
+      size_t index = _tzcnt_u64(mask);
+      return start + index;
+    }
+
+    start += step;
+  }
+
+  // Handle remaining elements with masked load
+  size_t remaining = end - start;
+  if (remaining > 0) {
+    // Create a mask for the remaining elements using shifted 0xFFFFFFFF
+    __mmask32 load_mask = 0xFFFFFFFF >> (32 - remaining);
+    __m512i data = _mm512_maskz_loadu_epi16(
+        load_mask, reinterpret_cast<const __m512i *>(start));
+    __mmask32 match_mask = _mm512_cmpeq_epi16_mask(data, char_vec);
+
+    // Apply load mask to avoid false positives
+    match_mask &= load_mask;
+
+    if (match_mask != 0) {
+      // Found a match in the remaining elements
+      size_t index = _tzcnt_u64(match_mask);
+      return start + index;
+    }
+  }
+
+  return end;
+}
+/* end file src/icelake/icelake_find.inl.cpp */
 #endif // SIMDUTF_FEATURE_BASE64
 
 #include <cstdint>
@@ -31793,6 +32200,16 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
     return encode_base64<false>(output, input, length, options);
   }
 }
+
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return util_find(start, end, character);
+}
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return util_find(start, end, character);
+}
+
 #endif // SIMDUTF_FEATURE_BASE64
 
 } // namespace icelake
@@ -37486,6 +37903,45 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
 } // namespace haswell
 } // namespace simdutf
 /* end file src/generic/base64.h */
+/* begin file src/generic/find.h */
+
+namespace simdutf {
+namespace haswell {
+namespace {
+namespace util {
+
+simdutf_really_inline const char *find(const char *start, const char *end,
+                                       char character) noexcept {
+  for (; std::distance(start, end) >= 64; start += 64) {
+    simd8x64<uint8_t> input(reinterpret_cast<const uint8_t *>(start));
+    uint64_t matches = input.eq(uint8_t(character));
+    if (matches != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(matches);
+      return start + index;
+    }
+  }
+  return std::find(start, end, character);
+}
+
+simdutf_really_inline const char16_t *
+find(const char16_t *start, const char16_t *end, char16_t character) noexcept {
+  for (; std::distance(start, end) >= 32; start += 32) {
+    simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(start));
+    uint64_t matches = input.eq(uint16_t(character));
+    if (matches != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(matches) / 2;
+      return start + index;
+    }
+  }
+  return std::find(start, end, character);
+}
+} // namespace util
+} // namespace
+} // namespace haswell
+} // namespace simdutf
+/* end file src/generic/find.h */
 #endif // SIMDUTF_FEATURE_BASE64
 
 namespace simdutf {
@@ -38704,7 +39160,18 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
     return encode_base64<false>(output, input, length, options);
   }
 }
+
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return util::find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return util::find(start, end, character);
+}
 #endif // SIMDUTF_FEATURE_BASE64
+
 } // namespace haswell
 } // namespace simdutf
 
@@ -44232,6 +44699,45 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
 } // namespace ppc64
 } // namespace simdutf
 /* end file src/generic/base64.h */
+/* begin file src/generic/find.h */
+
+namespace simdutf {
+namespace ppc64 {
+namespace {
+namespace util {
+
+simdutf_really_inline const char *find(const char *start, const char *end,
+                                       char character) noexcept {
+  for (; std::distance(start, end) >= 64; start += 64) {
+    simd8x64<uint8_t> input(reinterpret_cast<const uint8_t *>(start));
+    uint64_t matches = input.eq(uint8_t(character));
+    if (matches != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(matches);
+      return start + index;
+    }
+  }
+  return std::find(start, end, character);
+}
+
+simdutf_really_inline const char16_t *
+find(const char16_t *start, const char16_t *end, char16_t character) noexcept {
+  for (; std::distance(start, end) >= 32; start += 32) {
+    simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(start));
+    uint64_t matches = input.eq(uint16_t(character));
+    if (matches != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(matches) / 2;
+      return start + index;
+    }
+  }
+  return std::find(start, end, character);
+}
+} // namespace util
+} // namespace
+} // namespace ppc64
+} // namespace simdutf
+/* end file src/generic/find.h */
 #endif // SIMDUTF_FEATURE_BASE64
 
 /* begin file src/ppc64/templates.cpp */
@@ -44678,8 +45184,8 @@ simdutf_warn_unused result implementation::convert_utf16le_to_utf8_with_errors(
 
   return convert_with_errors_impl(
       ppc64_convert_utf16_to_utf8<endianness::LITTLE>,
-      scalar::utf16_to_utf8::convert_with_errors<endianness::LITTLE>, buf, len,
-      utf8_output);
+      scalar::utf16_to_utf8::simple_convert_with_errors<endianness::LITTLE>,
+      buf, len, utf8_output);
 }
 
 simdutf_warn_unused result implementation::convert_utf16be_to_utf8_with_errors(
@@ -44687,8 +45193,8 @@ simdutf_warn_unused result implementation::convert_utf16be_to_utf8_with_errors(
 
   return convert_with_errors_impl(
       ppc64_convert_utf16_to_utf8<endianness::BIG>,
-      scalar::utf16_to_utf8::convert_with_errors<endianness::BIG>, buf, len,
-      utf8_output);
+      scalar::utf16_to_utf8::simple_convert_with_errors<endianness::BIG>, buf,
+      len, utf8_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf8(
@@ -45074,6 +45580,15 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
   } else {
     return encode_base64<false>(output, input, length, options);
   }
+}
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return util::find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return util::find(start, end, character);
 }
 #endif // SIMDUTF_FEATURE_BASE64
 
@@ -46884,6 +47399,16 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
                                         char *output,
                                         base64_options options) const noexcept {
   return scalar::base64::tail_encode_base64(output, input, length, options);
+}
+
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return std::find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return std::find(start, end, character);
 }
 #endif // SIMDUTF_FEATURE_BASE64
 
@@ -52471,6 +52996,45 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
 } // namespace westmere
 } // namespace simdutf
 /* end file src/generic/base64.h */
+/* begin file src/generic/find.h */
+
+namespace simdutf {
+namespace westmere {
+namespace {
+namespace util {
+
+simdutf_really_inline const char *find(const char *start, const char *end,
+                                       char character) noexcept {
+  for (; std::distance(start, end) >= 64; start += 64) {
+    simd8x64<uint8_t> input(reinterpret_cast<const uint8_t *>(start));
+    uint64_t matches = input.eq(uint8_t(character));
+    if (matches != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(matches);
+      return start + index;
+    }
+  }
+  return std::find(start, end, character);
+}
+
+simdutf_really_inline const char16_t *
+find(const char16_t *start, const char16_t *end, char16_t character) noexcept {
+  for (; std::distance(start, end) >= 32; start += 32) {
+    simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(start));
+    uint64_t matches = input.eq(uint16_t(character));
+    if (matches != 0) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(matches) / 2;
+      return start + index;
+    }
+  }
+  return std::find(start, end, character);
+}
+} // namespace util
+} // namespace
+} // namespace westmere
+} // namespace simdutf
+/* end file src/generic/find.h */
 #endif // SIMDUTF_FEATURE_BASE64
 
 //
@@ -53724,6 +54288,16 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
   } else {
     return encode_base64<false>(output, input, length, options);
   }
+}
+
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return util::find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return util::find(start, end, character);
 }
 #endif // SIMDUTF_FEATURE_BASE64
 
@@ -60174,7 +60748,17 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
     return encode_base64<false>(output, input, length, options);
   }
 }
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return std::find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return std::find(start, end, character);
+}
 #endif // SIMDUTF_FEATURE_BASE64
+
 } // namespace lsx
 } // namespace simdutf
 
@@ -67137,7 +67721,18 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
     return encode_base64<false>(output, input, length, options);
   }
 }
+
+const char *implementation::find(const char *start, const char *end,
+                                 char character) const noexcept {
+  return std::find(start, end, character);
+}
+
+const char16_t *implementation::find(const char16_t *start, const char16_t *end,
+                                     char16_t character) const noexcept {
+  return std::find(start, end, character);
+}
 #endif // SIMDUTF_FEATURE_BASE64
+
 } // namespace lasx
 } // namespace simdutf
 

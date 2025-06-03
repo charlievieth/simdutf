@@ -190,11 +190,8 @@ def create_pr(old_version: str, new_version: str, auth_token: str) -> None:
 
     body = {
         "title": title,
-        # "body": "This commit updates the bundled simdutf library from version "
-        # + f"{rel_url(old_version)} to {rel_url(new_version)}.",
-        "body": "This commit updates the bundled simdutf library from version %s to %s".format(
-            {rel_url(old_version)}, {rel_url(new_version)}
-        ),
+        "body": "This commit updates the bundled simdutf library from version "
+        + f"{rel_url(old_version)} to {rel_url(new_version)}.",
         "head": branch,
         "base": "master",
     }
@@ -250,88 +247,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
-# class Semver:
-#     __slots__ = ("major", "minor", "patch", "tag")
-#
-#     major = 0
-#     minor = 0
-#     patch = 0
-#     tag = ""
-#
-#     def __init__(self, major: int, minor: int, patch: int, tag: str = ""):
-#         self.major = major
-#         self.minor = minor
-#         self.patch = patch
-#         self.tag = tag
-#
-#     # def __lt__(self, value: object, /) -> bool:
-#     #     pass
-#
-#     def __eq__(self, other: object) -> bool:
-#         if not isinstance(other, Semver):
-#             return NotImplemented
-#         return bool(
-#             self.major == other.major
-#             and self.minor == other.minor
-#             and self.patch == other.patch
-#             and self.tag == other.tag
-#         )
-#
-#     def __ne__(self, other: object) -> bool:
-#         if not isinstance(other, Semver):
-#             return NotImplemented
-#         return not self.__eq__(other)
-#
-#     def __lt__(self, other: object) -> bool:
-#         if not isinstance(other, Semver):
-#             return NotImplemented
-#         return bool(
-#             self.major < other.major
-#             or self.minor < other.minor
-#             or self.patch < other.patch
-#             or self.tag < other.tag
-#         )
-#
-#     def __gt__(self, other: object) -> bool:
-#         if not isinstance(other, Semver):
-#             return NotImplemented
-#         return bool(
-#             self.major > other.major
-#             or self.minor > other.minor
-#             or self.patch > other.patch
-#             or self.tag > other.tag
-#         )
-#
-#
-#     @classmethod
-#     def parse(cls, ver: str) -> "Semver":
-#         if ver.startswith("v"):
-#             ver = ver[1:]
-#         a = ver.split(".")
-#         if len(a) == 3:
-#             tag = ""
-#             if "-" in a[-1]:
-#                 tag = a[-1][a[-1].index("-") + 1:]
-#             else:
-#                 tag = ""
-#             return Semver(int(a[0]), int(a[1]), int(a[2]), tag=tag)
-#         return Semver(0, 0, 0)
-
-
-# # WARN: use this
-# def get_singleheader_download_url(rel: dict[str, Any]) -> str:
-#     for a in rel["assets"]:
-#         if a["name"] == "singleheader.zip":
-#             return a["browser_download_url"]
-#     raise Exception("singleheader not found in release")
-#
-#
-# # WARN: use this
-# def update_simdutf(target: str) -> None:
-#     rel = latest_simdutf_release()
-#     if rel["tag_name"] != target:
-#         raise Exception(f"latest simdutf release {rel["tag_name"]} != {target}")
-#     # WARN: why is this not used
-#     url = get_singleheader_download_url(rel)

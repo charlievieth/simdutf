@@ -1,0 +1,27 @@
+---
+name: Update simdutf library
+
+on:
+  schedule:
+    - cron: '10 */2 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.24.x']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-go@v5
+        name: Setup Go ${{ matrix.go-version }}
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Check for updates
+        run: python3 ./scripts/update-simdutf.py
+        env:
+          SIMDUTF_GH_ACTIONS: ${{ secrets.SIMDUTF_GH_ACTIONS }}

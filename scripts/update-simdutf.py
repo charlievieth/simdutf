@@ -245,5 +245,103 @@ def main() -> int:
     return 0
 
 
+class Semver:
+    __slots__ = ("major", "minor", "patch", "tag")
+
+    def __init__(self, major: int, minor: int, patch: int, tag: str = ""):
+        self.major = major
+        self.minor = minor
+        self.patch = patch
+        self.tag = tag
+
+    def __str__(self) -> str:
+        if self.tag:
+            return f"v{self.major}.{self.minor}.{self.patch}-{self.tag}"
+        return f"v{self.major}.{self.minor}.{self.patch}"
+
+    def __repr__(self) -> str:
+        if self.tag:
+            return f"Semver({self.major}, {self.minor}, {self.patch}, {self.tag!r})"
+        return f"Semver({self.major}, {self.minor}, {self.patch})"
+
+    def __hash__(self) -> int:
+        return hash((self.major, self.minor, self.patch, self.tag))
+
+    def _compare(self, other: object) -> int:
+        if not isinstance(other, Semver):
+            return NotImplemented
+        if (
+            self.major == other.major
+            and self.minor == other.minor
+            and self.patch == other.patch
+        ):
+            if self.tag == other.tag:
+                return 0
+            return 1 if self.tag > other.tag else -1
+        if (
+            self.major < other.major
+            or self.minor < other.minor
+            or self.patch < other.patch
+        ):
+            return -1
+        return 1
+
+    # TODO: consider using a lambda
+    # # TODO: consider using this
+    # def _cmp(self, other: object, op: Callable[[int, int], bool], exp: int) -> bool:
+    #     res = self._compare(other)
+    #     if res is NotImplemented:
+    #         return NotImplemented
+    #     return op(res, exp)
+
+    def __eq__(self, other: object) -> bool:
+        # return self._cmp(other, operator.eq, 0)
+        if not isinstance(other, Semver):
+            return NotImplemented
+        return self._compare(other) == 0
+
+    def __ne__(self, other: object) -> bool:
+        if not isinstance(other, Semver):
+            return NotImplemented
+        return self._compare(other) != 0
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, Semver):
+            return NotImplemented
+        return self._compare(other) < 0
+
+    def __le__(self, other: object) -> bool:
+        if not isinstance(other, Semver):
+            return NotImplemented
+        return self._compare(other) <= 0
+
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, Semver):
+            return NotImplemented
+        return self._compare(other) > 0
+
+    def __ge__(self, other: object) -> bool:
+        if not isinstance(other, Semver):
+            return NotImplemented
+        return self._compare(other) >= 0
+
+    @classmethod
+    def parse(cls, ver: str) -> "Semver":
+        orig = ver
+        if ver.startswith("v"):
+            ver = ver[1:]
+        tag = ""
+        if "-" in ver:
+            (ver, tag) = ver.split("-", 1)
+        a = ver.split(".")
+        if len(a) == 3:
+            return Semver(int(a[0]), int(a[1]), int(a[2]), tag)
+        elif len(a) == 2:
+            return Semver(int(a[0]), int(a[1]), 0, tag)
+        elif len(a) == 1:
+            return Semver(int(a[0]), 0, 0, tag)
+        raise ValueError(f"semver: invalid format: '{orig}'")
+
+
 if __name__ == "__main__":
     sys.exit(main())

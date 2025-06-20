@@ -14,6 +14,15 @@ package simdutf
 // #include "simdutf_ext.h"
 import "C"
 
+// #XXX_cgo noescape utf16_length_from_utf8
+// #XXX_cgo nocallback utf16_length_from_utf8
+// #XXX_cgo noescape utf8_length_from_utf16
+// #XXX_cgo nocallback utf8_length_from_utf16
+// #XXX_cgo noescape convert_utf8_to_utf16
+// #XXX_cgo nocallback convert_utf8_to_utf16
+// #XXX_cgo noescape convert_utf16_to_utf8
+// #XXX_cgo nocallback convert_utf16_to_utf8
+
 import (
 	"unicode/utf8"
 	"unsafe"
@@ -112,4 +121,22 @@ func validateASCII(p *byte, n int) bool {
 
 func validateUTF8(p *byte, n int) bool {
 	return bool(C.validate_utf8((*C.char)(unsafe.Pointer(p)), C.size_t(n)))
+}
+
+func ConvertUTF8ToUTF16(s string) []uint16 {
+	if len(s) == 0 {
+		return nil
+	}
+	n := C.utf16_length_from_utf8((*C.char)(unsafe.Pointer(unsafe.StringData(s))), C.size_t(len(s)))
+	if n <= 0 {
+		return nil
+	}
+	u := make([]uint16, int(n))
+	n = C.convert_utf8_to_utf16(
+		(*C.char)(unsafe.Pointer(unsafe.StringData(s))),
+		C.size_t(len(s)),
+		(*C.int16_t)(unsafe.Pointer(&u[0])),
+	)
+	_ = n // WARN: what to do here ???
+	return u
 }

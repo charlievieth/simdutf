@@ -1,4 +1,4 @@
-//go:build !libsimdutf
+// go:build !libsimdutf
 
 /* auto-generated on 2025-05-28 18:43:22 -0400. Do not edit! */
 /* begin file include/simdutf.h */
@@ -11,44 +11,44 @@
 #define SIMDUTF_COMPILER_CHECK_H
 
 #ifndef __cplusplus
-  #error simdutf requires a C++ compiler
+#error simdutf requires a C++ compiler
 #endif
 
 #ifndef SIMDUTF_CPLUSPLUS
-  #if defined(_MSVC_LANG) && !defined(__clang__)
-    #define SIMDUTF_CPLUSPLUS (_MSC_VER == 1900 ? 201103L : _MSVC_LANG)
-  #else
-    #define SIMDUTF_CPLUSPLUS __cplusplus
-  #endif
+#if defined(_MSVC_LANG) && !defined(__clang__)
+#define SIMDUTF_CPLUSPLUS (_MSC_VER == 1900 ? 201103L : _MSVC_LANG)
+#else
+#define SIMDUTF_CPLUSPLUS __cplusplus
+#endif
 #endif
 
 // C++ 23
 #if !defined(SIMDUTF_CPLUSPLUS23) && (SIMDUTF_CPLUSPLUS >= 202302L)
-  #define SIMDUTF_CPLUSPLUS23 1
+#define SIMDUTF_CPLUSPLUS23 1
 #endif
 
 // C++ 20
 #if !defined(SIMDUTF_CPLUSPLUS20) && (SIMDUTF_CPLUSPLUS >= 202002L)
-  #define SIMDUTF_CPLUSPLUS20 1
+#define SIMDUTF_CPLUSPLUS20 1
 #endif
 
 // C++ 17
 #if !defined(SIMDUTF_CPLUSPLUS17) && (SIMDUTF_CPLUSPLUS >= 201703L)
-  #define SIMDUTF_CPLUSPLUS17 1
+#define SIMDUTF_CPLUSPLUS17 1
 #endif
 
 // C++ 14
 #if !defined(SIMDUTF_CPLUSPLUS14) && (SIMDUTF_CPLUSPLUS >= 201402L)
-  #define SIMDUTF_CPLUSPLUS14 1
+#define SIMDUTF_CPLUSPLUS14 1
 #endif
 
 // C++ 11
 #if !defined(SIMDUTF_CPLUSPLUS11) && (SIMDUTF_CPLUSPLUS >= 201103L)
-  #define SIMDUTF_CPLUSPLUS11 1
+#define SIMDUTF_CPLUSPLUS11 1
 #endif
 
 #ifndef SIMDUTF_CPLUSPLUS11
-  #error simdutf requires a compiler compliant with the C++11 standard
+#error simdutf requires a compiler compliant with the C++11 standard
 #endif
 
 #endif // SIMDUTF_COMPILER_CHECK_H
@@ -61,35 +61,34 @@
 #ifndef SIMDUTF_PORTABILITY_H
 #define SIMDUTF_PORTABILITY_H
 
-
 #include <cfloat>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #ifndef _WIN32
-  // strcasecmp, strncasecmp
-  #include <strings.h>
+// strcasecmp, strncasecmp
+#include <strings.h>
 #endif
 
 #if defined(__apple_build_version__)
-  #if __apple_build_version__ < 14000000
-    #define SIMDUTF_SPAN_DISABLED                                              \
-      1 // apple-clang/13 doesn't support std::convertible_to
-  #endif
+#if __apple_build_version__ < 14000000
+#define SIMDUTF_SPAN_DISABLED                                                  \
+  1 // apple-clang/13 doesn't support std::convertible_to
+#endif
 #endif
 
 #if SIMDUTF_CPLUSPLUS20
-  #include <version>
-  #if __cpp_concepts >= 201907L && __cpp_lib_span >= 202002L &&                \
-      !defined(SIMDUTF_SPAN_DISABLED)
-    #define SIMDUTF_SPAN 1
-  #endif // __cpp_concepts >= 201907L && __cpp_lib_span >= 202002L
-  #if __cpp_lib_atomic_ref >= 201806L
-    #define SIMDUTF_ATOMIC_REF 1
-  #endif // __cpp_lib_atomic_ref
-  #if __has_cpp_attribute(maybe_unused) >= 201603L
-    #define SIMDUTF_MAYBE_UNUSED_AVAILABLE 1
-  #endif // __has_cpp_attribute(maybe_unused) >= 201603L
+#include <version>
+#if __cpp_concepts >= 201907L && __cpp_lib_span >= 202002L &&                  \
+    !defined(SIMDUTF_SPAN_DISABLED)
+#define SIMDUTF_SPAN 1
+#endif // __cpp_concepts >= 201907L && __cpp_lib_span >= 202002L
+#if __cpp_lib_atomic_ref >= 201806L
+#define SIMDUTF_ATOMIC_REF 1
+#endif // __cpp_lib_atomic_ref
+#if __has_cpp_attribute(maybe_unused) >= 201603L
+#define SIMDUTF_MAYBE_UNUSED_AVAILABLE 1
+#endif // __has_cpp_attribute(maybe_unused) >= 201603L
 #endif
 
 /**
@@ -98,36 +97,36 @@
  */
 
 #if defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__)
-  #define SIMDUTF_IS_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define SIMDUTF_IS_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #elif defined(_WIN32)
-  #define SIMDUTF_IS_BIG_ENDIAN 0
+#define SIMDUTF_IS_BIG_ENDIAN 0
 #else
-  #if defined(__APPLE__) ||                                                    \
-      defined(__FreeBSD__) // defined __BYTE_ORDER__ && defined
-                           // __ORDER_BIG_ENDIAN__
-    #include <machine/endian.h>
-  #elif defined(sun) ||                                                        \
-      defined(__sun) // defined(__APPLE__) || defined(__FreeBSD__)
-    #include <sys/byteorder.h>
-  #else // defined(__APPLE__) || defined(__FreeBSD__)
+#if defined(__APPLE__) ||                                                      \
+    defined(__FreeBSD__) // defined __BYTE_ORDER__ && defined
+                         // __ORDER_BIG_ENDIAN__
+#include <machine/endian.h>
+#elif defined(sun) ||                                                          \
+    defined(__sun) // defined(__APPLE__) || defined(__FreeBSD__)
+#include <sys/byteorder.h>
+#else // defined(__APPLE__) || defined(__FreeBSD__)
 
-    #ifdef __has_include
-      #if __has_include(<endian.h>)
-        #include <endian.h>
-      #endif //__has_include(<endian.h>)
-    #endif   //__has_include
+#ifdef __has_include
+#if __has_include(<endian.h>)
+#include <endian.h>
+#endif //__has_include(<endian.h>)
+#endif //__has_include
 
-  #endif // defined(__APPLE__) || defined(__FreeBSD__)
+#endif // defined(__APPLE__) || defined(__FreeBSD__)
 
-  #ifndef !defined(__BYTE_ORDER__) || !defined(__ORDER_LITTLE_ENDIAN__)
-    #define SIMDUTF_IS_BIG_ENDIAN 0
-  #endif
+#ifndef !defined(__BYTE_ORDER__) || !defined(__ORDER_LITTLE_ENDIAN__)
+#define SIMDUTF_IS_BIG_ENDIAN 0
+#endif
 
-  #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    #define SIMDUTF_IS_BIG_ENDIAN 0
-  #else // __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    #define SIMDUTF_IS_BIG_ENDIAN 1
-  #endif // __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define SIMDUTF_IS_BIG_ENDIAN 0
+#else // __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define SIMDUTF_IS_BIG_ENDIAN 1
+#endif // __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 
 #endif // defined __BYTE_ORDER__ && defined __ORDER_BIG_ENDIAN__
 
@@ -136,101 +135,101 @@
  */
 
 #ifdef _MSC_VER
-  #define SIMDUTF_VISUAL_STUDIO 1
-  /**
-   * We want to differentiate carefully between
-   * clang under visual studio and regular visual
-   * studio.
-   *
-   * Under clang for Windows, we enable:
-   *  * target pragmas so that part and only part of the
-   *     code gets compiled for advanced instructions.
-   *
-   */
-  #ifdef __clang__
-    // clang under visual studio
-    #define SIMDUTF_CLANG_VISUAL_STUDIO 1
-  #else
-    // just regular visual studio (best guess)
-    #define SIMDUTF_REGULAR_VISUAL_STUDIO 1
-  #endif // __clang__
-#endif   // _MSC_VER
+#define SIMDUTF_VISUAL_STUDIO 1
+/**
+ * We want to differentiate carefully between
+ * clang under visual studio and regular visual
+ * studio.
+ *
+ * Under clang for Windows, we enable:
+ *  * target pragmas so that part and only part of the
+ *     code gets compiled for advanced instructions.
+ *
+ */
+#ifdef __clang__
+// clang under visual studio
+#define SIMDUTF_CLANG_VISUAL_STUDIO 1
+#else
+// just regular visual studio (best guess)
+#define SIMDUTF_REGULAR_VISUAL_STUDIO 1
+#endif // __clang__
+#endif // _MSC_VER
 
 #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
-  // https://en.wikipedia.org/wiki/C_alternative_tokens
-  // This header should have no effect, except maybe
-  // under Visual Studio.
-  #include <iso646.h>
+// https://en.wikipedia.org/wiki/C_alternative_tokens
+// This header should have no effect, except maybe
+// under Visual Studio.
+#include <iso646.h>
 #endif
 
 #if (defined(__x86_64__) || defined(_M_AMD64)) && !defined(_M_ARM64EC)
-  #define SIMDUTF_IS_X86_64 1
+#define SIMDUTF_IS_X86_64 1
 #elif defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC)
-  #define SIMDUTF_IS_ARM64 1
+#define SIMDUTF_IS_ARM64 1
 #elif defined(__PPC64__) || defined(_M_PPC64)
-  #if defined(__VEC__) && defined(__ALTIVEC__)
-    #define SIMDUTF_IS_PPC64 1
-  #endif
+#if defined(__VEC__) && defined(__ALTIVEC__)
+#define SIMDUTF_IS_PPC64 1
+#endif
 #elif defined(__s390__)
 // s390 IBM system. Big endian.
 #elif (defined(__riscv) || defined(__riscv__)) && __riscv_xlen == 64
-  // RISC-V 64-bit
-  #define SIMDUTF_IS_RISCV64 1
+// RISC-V 64-bit
+#define SIMDUTF_IS_RISCV64 1
 
-  // #if __riscv_v_intrinsic >= 1000000
-  //   #define SIMDUTF_HAS_RVV_INTRINSICS 1
-  //   #define SIMDUTF_HAS_RVV_TARGET_REGION 1
-  // #elif ...
-  //  Check for special compiler versions that implement pre v1.0 intrinsics
-  #if __riscv_v_intrinsic >= 11000
-    #define SIMDUTF_HAS_RVV_INTRINSICS 1
-  #endif
+// #if __riscv_v_intrinsic >= 1000000
+//   #define SIMDUTF_HAS_RVV_INTRINSICS 1
+//   #define SIMDUTF_HAS_RVV_TARGET_REGION 1
+// #elif ...
+//  Check for special compiler versions that implement pre v1.0 intrinsics
+#if __riscv_v_intrinsic >= 11000
+#define SIMDUTF_HAS_RVV_INTRINSICS 1
+#endif
 
-  #define SIMDUTF_HAS_ZVBB_INTRINSICS                                          \
-    0 // there is currently no way to detect this
+#define SIMDUTF_HAS_ZVBB_INTRINSICS                                            \
+  0 // there is currently no way to detect this
 
-  #if SIMDUTF_HAS_RVV_INTRINSICS && __riscv_vector &&                          \
-      __riscv_v_min_vlen >= 128 && __riscv_v_elen >= 64
-    // RISC-V V extension
-    #define SIMDUTF_IS_RVV 1
-    #if SIMDUTF_HAS_ZVBB_INTRINSICS && __riscv_zvbb >= 1000000
-      // RISC-V Vector Basic Bit-manipulation
-      #define SIMDUTF_IS_ZVBB 1
-    #endif
-  #endif
+#if SIMDUTF_HAS_RVV_INTRINSICS && __riscv_vector &&                            \
+    __riscv_v_min_vlen >= 128 && __riscv_v_elen >= 64
+// RISC-V V extension
+#define SIMDUTF_IS_RVV 1
+#if SIMDUTF_HAS_ZVBB_INTRINSICS && __riscv_zvbb >= 1000000
+// RISC-V Vector Basic Bit-manipulation
+#define SIMDUTF_IS_ZVBB 1
+#endif
+#endif
 
 #elif defined(__loongarch_lp64)
-  #if defined(__loongarch_sx) && defined(__loongarch_asx)
-    #define SIMDUTF_IS_LSX 1
-    #define SIMDUTF_IS_LASX 1
-  #elif defined(__loongarch_sx)
-    #define SIMDUTF_IS_LSX 1
-  #endif
+#if defined(__loongarch_sx) && defined(__loongarch_asx)
+#define SIMDUTF_IS_LSX 1
+#define SIMDUTF_IS_LASX 1
+#elif defined(__loongarch_sx)
+#define SIMDUTF_IS_LSX 1
+#endif
 #else
-  // The simdutf library is designed
-  // for 64-bit processors and it seems that you are not
-  // compiling for a known 64-bit platform. Please
-  // use a 64-bit target such as x64 or 64-bit ARM for best performance.
-  #define SIMDUTF_IS_32BITS 1
+// The simdutf library is designed
+// for 64-bit processors and it seems that you are not
+// compiling for a known 64-bit platform. Please
+// use a 64-bit target such as x64 or 64-bit ARM for best performance.
+#define SIMDUTF_IS_32BITS 1
 
-  // We do not support 32-bit platforms, but it can be
-  // handy to identify them.
-  #if defined(_M_IX86) || defined(__i386__)
-    #define SIMDUTF_IS_X86_32BITS 1
-  #elif defined(__arm__) || defined(_M_ARM)
-    #define SIMDUTF_IS_ARM_32BITS 1
-  #elif defined(__PPC__) || defined(_M_PPC)
-    #define SIMDUTF_IS_PPC_32BITS 1
-  #endif
+// We do not support 32-bit platforms, but it can be
+// handy to identify them.
+#if defined(_M_IX86) || defined(__i386__)
+#define SIMDUTF_IS_X86_32BITS 1
+#elif defined(__arm__) || defined(_M_ARM)
+#define SIMDUTF_IS_ARM_32BITS 1
+#elif defined(__PPC__) || defined(_M_PPC)
+#define SIMDUTF_IS_PPC_32BITS 1
+#endif
 
 #endif // defined(__x86_64__) || defined(_M_AMD64)
 
 #ifdef SIMDUTF_IS_32BITS
-  #ifndef SIMDUTF_NO_PORTABILITY_WARNING
-  // In the future, we may want to warn users of 32-bit systems that
-  // the simdutf does not support accelerated kernels for such systems.
-  #endif // SIMDUTF_NO_PORTABILITY_WARNING
-#endif   // SIMDUTF_IS_32BITS
+#ifndef SIMDUTF_NO_PORTABILITY_WARNING
+// In the future, we may want to warn users of 32-bit systems that
+// the simdutf does not support accelerated kernels for such systems.
+#endif // SIMDUTF_NO_PORTABILITY_WARNING
+#endif // SIMDUTF_IS_32BITS
 
 // this is almost standard?
 #define SIMDUTF_STRINGIFY_IMPLEMENTATION_(a) #a
@@ -253,71 +252,71 @@
 
 // We are going to use runtime dispatch.
 #ifdef SIMDUTF_IS_X86_64
-  #ifdef __clang__
-    // clang does not have GCC push pop
-    // warning: clang attribute push can't be used within a namespace in clang
-    // up til 8.0 so SIMDUTF_TARGET_REGION and SIMDUTF_UNTARGET_REGION must be
-    // *outside* of a namespace.
-    #define SIMDUTF_TARGET_REGION(T)                                           \
-      _Pragma(SIMDUTF_STRINGIFY(clang attribute push(                          \
-          __attribute__((target(T))), apply_to = function)))
-    #define SIMDUTF_UNTARGET_REGION _Pragma("clang attribute pop")
-  #elif defined(__GNUC__)
-    // GCC is easier
-    #define SIMDUTF_TARGET_REGION(T)                                           \
-      _Pragma("GCC push_options") _Pragma(SIMDUTF_STRINGIFY(GCC target(T)))
-    #define SIMDUTF_UNTARGET_REGION _Pragma("GCC pop_options")
-  #endif // clang then gcc
+#ifdef __clang__
+// clang does not have GCC push pop
+// warning: clang attribute push can't be used within a namespace in clang
+// up til 8.0 so SIMDUTF_TARGET_REGION and SIMDUTF_UNTARGET_REGION must be
+// *outside* of a namespace.
+#define SIMDUTF_TARGET_REGION(T)                                               \
+  _Pragma(SIMDUTF_STRINGIFY(                                                   \
+      clang attribute push(__attribute__((target(T))), apply_to = function)))
+#define SIMDUTF_UNTARGET_REGION _Pragma("clang attribute pop")
+#elif defined(__GNUC__)
+// GCC is easier
+#define SIMDUTF_TARGET_REGION(T)                                               \
+  _Pragma("GCC push_options") _Pragma(SIMDUTF_STRINGIFY(GCC target(T)))
+#define SIMDUTF_UNTARGET_REGION _Pragma("GCC pop_options")
+#endif // clang then gcc
 
 #endif // x86
 
 // Default target region macros don't do anything.
 #ifndef SIMDUTF_TARGET_REGION
-  #define SIMDUTF_TARGET_REGION(T)
-  #define SIMDUTF_UNTARGET_REGION
+#define SIMDUTF_TARGET_REGION(T)
+#define SIMDUTF_UNTARGET_REGION
 #endif
 
 // Is threading enabled?
 #if defined(_REENTRANT) || defined(_MT)
-  #ifndef SIMDUTF_THREADS_ENABLED
-    #define SIMDUTF_THREADS_ENABLED
-  #endif
+#ifndef SIMDUTF_THREADS_ENABLED
+#define SIMDUTF_THREADS_ENABLED
+#endif
 #endif
 
 // workaround for large stack sizes under -O0.
 // https://github.com/simdutf/simdutf/issues/691
 #ifdef __APPLE__
-  #ifndef __OPTIMIZE__
-    // Apple systems have small stack sizes in secondary threads.
-    // Lack of compiler optimization may generate high stack usage.
-    // Users may want to disable threads for safety, but only when
-    // in debug mode which we detect by the fact that the __OPTIMIZE__
-    // macro is not defined.
-    #undef SIMDUTF_THREADS_ENABLED
-  #endif
+#ifndef __OPTIMIZE__
+// Apple systems have small stack sizes in secondary threads.
+// Lack of compiler optimization may generate high stack usage.
+// Users may want to disable threads for safety, but only when
+// in debug mode which we detect by the fact that the __OPTIMIZE__
+// macro is not defined.
+#undef SIMDUTF_THREADS_ENABLED
+#endif
 #endif
 
 #ifdef SIMDUTF_VISUAL_STUDIO
-  // This is one case where we do not distinguish between
-  // regular visual studio and clang under visual studio.
-  // clang under Windows has _stricmp (like visual studio) but not strcasecmp
-  // (as clang normally has)
-  #define simdutf_strcasecmp _stricmp
-  #define simdutf_strncasecmp _strnicmp
+// This is one case where we do not distinguish between
+// regular visual studio and clang under visual studio.
+// clang under Windows has _stricmp (like visual studio) but not strcasecmp
+// (as clang normally has)
+#define simdutf_strcasecmp _stricmp
+#define simdutf_strncasecmp _strnicmp
 #else
-  // The strcasecmp, strncasecmp, and strcasestr functions do not work with
-  // multibyte strings (e.g. UTF-8). So they are only useful for ASCII in our
-  // context.
-  // https://www.gnu.org/software/libunistring/manual/libunistring.html#char-_002a-strings
-  #define simdutf_strcasecmp strcasecmp
-  #define simdutf_strncasecmp strncasecmp
+// The strcasecmp, strncasecmp, and strcasestr functions do not work with
+// multibyte strings (e.g. UTF-8). So they are only useful for ASCII in our
+// context.
+// https://www.gnu.org/software/libunistring/manual/libunistring.html#char-_002a-strings
+#define simdutf_strcasecmp strcasecmp
+#define simdutf_strncasecmp strncasecmp
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__)
-  #if __GNUC__ >= 11
-    #define SIMDUTF_GCC11ORMORE 1
-  #endif //  __GNUC__ >= 11
-#endif   // defined(__GNUC__) && !defined(__clang__)
+#if __GNUC__ >= 11
+#define SIMDUTF_GCC11ORMORE 1
+#endif //  __GNUC__ >= 11
+#endif // defined(__GNUC__) && !defined(__clang__)
 
 #endif // SIMDUTF_PORTABILITY_H
 /* end file include/simdutf/portability.h */
@@ -335,69 +334,69 @@
 */
 
 #ifndef SIMDUTF_HAS_AVX512F
-  #if defined(__AVX512F__) && __AVX512F__ == 1
-    #define SIMDUTF_HAS_AVX512F 1
-  #endif
+#if defined(__AVX512F__) && __AVX512F__ == 1
+#define SIMDUTF_HAS_AVX512F 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512DQ
-  #if defined(__AVX512DQ__) && __AVX512DQ__ == 1
-    #define SIMDUTF_HAS_AVX512DQ 1
-  #endif
+#if defined(__AVX512DQ__) && __AVX512DQ__ == 1
+#define SIMDUTF_HAS_AVX512DQ 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512IFMA
-  #if defined(__AVX512IFMA__) && __AVX512IFMA__ == 1
-    #define SIMDUTF_HAS_AVX512IFMA 1
-  #endif
+#if defined(__AVX512IFMA__) && __AVX512IFMA__ == 1
+#define SIMDUTF_HAS_AVX512IFMA 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512CD
-  #if defined(__AVX512CD__) && __AVX512CD__ == 1
-    #define SIMDUTF_HAS_AVX512CD 1
-  #endif
+#if defined(__AVX512CD__) && __AVX512CD__ == 1
+#define SIMDUTF_HAS_AVX512CD 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512BW
-  #if defined(__AVX512BW__) && __AVX512BW__ == 1
-    #define SIMDUTF_HAS_AVX512BW 1
-  #endif
+#if defined(__AVX512BW__) && __AVX512BW__ == 1
+#define SIMDUTF_HAS_AVX512BW 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512VL
-  #if defined(__AVX512VL__) && __AVX512VL__ == 1
-    #define SIMDUTF_HAS_AVX512VL 1
-  #endif
+#if defined(__AVX512VL__) && __AVX512VL__ == 1
+#define SIMDUTF_HAS_AVX512VL 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512VBMI
-  #if defined(__AVX512VBMI__) && __AVX512VBMI__ == 1
-    #define SIMDUTF_HAS_AVX512VBMI 1
-  #endif
+#if defined(__AVX512VBMI__) && __AVX512VBMI__ == 1
+#define SIMDUTF_HAS_AVX512VBMI 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512VBMI2
-  #if defined(__AVX512VBMI2__) && __AVX512VBMI2__ == 1
-    #define SIMDUTF_HAS_AVX512VBMI2 1
-  #endif
+#if defined(__AVX512VBMI2__) && __AVX512VBMI2__ == 1
+#define SIMDUTF_HAS_AVX512VBMI2 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512VNNI
-  #if defined(__AVX512VNNI__) && __AVX512VNNI__ == 1
-    #define SIMDUTF_HAS_AVX512VNNI 1
-  #endif
+#if defined(__AVX512VNNI__) && __AVX512VNNI__ == 1
+#define SIMDUTF_HAS_AVX512VNNI 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512BITALG
-  #if defined(__AVX512BITALG__) && __AVX512BITALG__ == 1
-    #define SIMDUTF_HAS_AVX512BITALG 1
-  #endif
+#if defined(__AVX512BITALG__) && __AVX512BITALG__ == 1
+#define SIMDUTF_HAS_AVX512BITALG 1
+#endif
 #endif
 
 #ifndef SIMDUTF_HAS_AVX512VPOPCNTDQ
-  #if defined(__AVX512VPOPCNTDQ__) && __AVX512VPOPCNTDQ__ == 1
-    #define SIMDUTF_HAS_AVX512VPOPCNTDQ 1
-  #endif
+#if defined(__AVX512VPOPCNTDQ__) && __AVX512VPOPCNTDQ__ == 1
+#define SIMDUTF_HAS_AVX512VPOPCNTDQ 1
+#endif
 #endif
 
 #endif // SIMDUTF_AVX512_H_
@@ -406,84 +405,84 @@
 // Sometimes logging is useful, but we want it disabled by default
 // and free of any logging code in release builds.
 #ifdef SIMDUTF_LOGGING
-  #include <iostream>
-  #define simdutf_log(msg)                                                     \
-    std::cout << "[" << __FUNCTION__ << "]: " << msg << std::endl              \
-              << "\t" << __FILE__ << ":" << __LINE__ << std::endl;
-  #define simdutf_log_assert(cond, msg)                                        \
-    do {                                                                       \
-      if (!(cond)) {                                                           \
-        std::cerr << "[" << __FUNCTION__ << "]: " << msg << std::endl          \
-                  << "\t" << __FILE__ << ":" << __LINE__ << std::endl;         \
-        std::abort();                                                          \
-      }                                                                        \
-    } while (0)
+#include <iostream>
+#define simdutf_log(msg)                                                       \
+  std::cout << "[" << __FUNCTION__ << "]: " << msg << std::endl                \
+            << "\t" << __FILE__ << ":" << __LINE__ << std::endl;
+#define simdutf_log_assert(cond, msg)                                          \
+  do {                                                                         \
+    if (!(cond)) {                                                             \
+      std::cerr << "[" << __FUNCTION__ << "]: " << msg << std::endl            \
+                << "\t" << __FILE__ << ":" << __LINE__ << std::endl;           \
+      std::abort();                                                            \
+    }                                                                          \
+  } while (0)
 #else
-  #define simdutf_log(msg)
-  #define simdutf_log_assert(cond, msg)
+#define simdutf_log(msg)
+#define simdutf_log_assert(cond, msg)
 #endif
 
 #if defined(SIMDUTF_REGULAR_VISUAL_STUDIO)
-  #define SIMDUTF_DEPRECATED __declspec(deprecated)
+#define SIMDUTF_DEPRECATED __declspec(deprecated)
 
-  #define simdutf_really_inline __forceinline // really inline in release mode
-  #define simdutf_always_inline __forceinline // always inline, no matter what
-  #define simdutf_never_inline __declspec(noinline)
+#define simdutf_really_inline __forceinline // really inline in release mode
+#define simdutf_always_inline __forceinline // always inline, no matter what
+#define simdutf_never_inline __declspec(noinline)
 
-  #define simdutf_unused
-  #define simdutf_warn_unused
+#define simdutf_unused
+#define simdutf_warn_unused
 
-  #ifndef simdutf_likely
-    #define simdutf_likely(x) x
-  #endif
-  #ifndef simdutf_unlikely
-    #define simdutf_unlikely(x) x
-  #endif
+#ifndef simdutf_likely
+#define simdutf_likely(x) x
+#endif
+#ifndef simdutf_unlikely
+#define simdutf_unlikely(x) x
+#endif
 
-  #define SIMDUTF_PUSH_DISABLE_WARNINGS __pragma(warning(push))
-  #define SIMDUTF_PUSH_DISABLE_ALL_WARNINGS __pragma(warning(push, 0))
-  #define SIMDUTF_DISABLE_VS_WARNING(WARNING_NUMBER)                           \
-    __pragma(warning(disable : WARNING_NUMBER))
-  // Get rid of Intellisense-only warnings (Code Analysis)
-  // Though __has_include is C++17, it is supported in Visual Studio 2017 or
-  // better (_MSC_VER>=1910).
-  #ifdef __has_include
-    #if __has_include(<CppCoreCheck\Warnings.h>)
-      #include <CppCoreCheck\Warnings.h>
-      #define SIMDUTF_DISABLE_UNDESIRED_WARNINGS                               \
-        SIMDUTF_DISABLE_VS_WARNING(ALL_CPPCORECHECK_WARNINGS)
-    #endif
-  #endif
+#define SIMDUTF_PUSH_DISABLE_WARNINGS __pragma(warning(push))
+#define SIMDUTF_PUSH_DISABLE_ALL_WARNINGS __pragma(warning(push, 0))
+#define SIMDUTF_DISABLE_VS_WARNING(WARNING_NUMBER)                             \
+  __pragma(warning(disable : WARNING_NUMBER))
+// Get rid of Intellisense-only warnings (Code Analysis)
+// Though __has_include is C++17, it is supported in Visual Studio 2017 or
+// better (_MSC_VER>=1910).
+#ifdef __has_include
+#if __has_include(<CppCoreCheck\Warnings.h>)
+#include <CppCoreCheck\Warnings.h>
+#define SIMDUTF_DISABLE_UNDESIRED_WARNINGS                                     \
+  SIMDUTF_DISABLE_VS_WARNING(ALL_CPPCORECHECK_WARNINGS)
+#endif
+#endif
 
-  #ifndef SIMDUTF_DISABLE_UNDESIRED_WARNINGS
-    #define SIMDUTF_DISABLE_UNDESIRED_WARNINGS
-  #endif
+#ifndef SIMDUTF_DISABLE_UNDESIRED_WARNINGS
+#define SIMDUTF_DISABLE_UNDESIRED_WARNINGS
+#endif
 
-  #define SIMDUTF_DISABLE_DEPRECATED_WARNING SIMDUTF_DISABLE_VS_WARNING(4996)
-  #define SIMDUTF_DISABLE_STRICT_OVERFLOW_WARNING
-  #define SIMDUTF_POP_DISABLE_WARNINGS __pragma(warning(pop))
-  #define SIMDUTF_DISABLE_UNUSED_WARNING
+#define SIMDUTF_DISABLE_DEPRECATED_WARNING SIMDUTF_DISABLE_VS_WARNING(4996)
+#define SIMDUTF_DISABLE_STRICT_OVERFLOW_WARNING
+#define SIMDUTF_POP_DISABLE_WARNINGS __pragma(warning(pop))
+#define SIMDUTF_DISABLE_UNUSED_WARNING
 #else // SIMDUTF_REGULAR_VISUAL_STUDIO
-  #if defined(__OPTIMIZE__) || defined(NDEBUG)
-    #define simdutf_really_inline inline __attribute__((always_inline))
-  #else
-    #define simdutf_really_inline inline
-  #endif
-  #define simdutf_always_inline                                                \
-    inline __attribute__((always_inline)) // always inline, no matter what
-  #define SIMDUTF_DEPRECATED __attribute__((deprecated))
-  #define simdutf_never_inline inline __attribute__((noinline))
+#if defined(__OPTIMIZE__) || defined(NDEBUG)
+#define simdutf_really_inline inline __attribute__((always_inline))
+#else
+#define simdutf_really_inline inline
+#endif
+#define simdutf_always_inline                                                  \
+  inline __attribute__((always_inline)) // always inline, no matter what
+#define SIMDUTF_DEPRECATED __attribute__((deprecated))
+#define simdutf_never_inline inline __attribute__((noinline))
 
-  #define simdutf_unused __attribute__((unused))
-  #define simdutf_warn_unused __attribute__((warn_unused_result))
+#define simdutf_unused __attribute__((unused))
+#define simdutf_warn_unused __attribute__((warn_unused_result))
 
-  #ifndef simdutf_likely
-    #define simdutf_likely(x) __builtin_expect(!!(x), 1)
-  #endif
-  #ifndef simdutf_unlikely
-    #define simdutf_unlikely(x) __builtin_expect(!!(x), 0)
-  #endif
-  // clang-format off
+#ifndef simdutf_likely
+#define simdutf_likely(x) __builtin_expect(!!(x), 1)
+#endif
+#ifndef simdutf_unlikely
+#define simdutf_unlikely(x) __builtin_expect(!!(x), 0)
+#endif
+// clang-format off
   #define SIMDUTF_PUSH_DISABLE_WARNINGS _Pragma("GCC diagnostic push")
   // gcc doesn't seem to disable all warnings with all and extra, add warnings
   // here as necessary
@@ -518,31 +517,31 @@
     SIMDUTF_PUSH_DISABLE_WARNINGS                                              \
     SIMDUTF_DISABLE_GCC_WARNING(-Wunused-function)                             \
     SIMDUTF_DISABLE_GCC_WARNING(-Wunused-const-variable)
-  // clang-format on
+// clang-format on
 
 #endif // MSC_VER
 
 #ifndef SIMDUTF_DLLIMPORTEXPORT
-  #if defined(SIMDUTF_VISUAL_STUDIO)
-    /**
-     * It does not matter here whether you are using
-     * the regular visual studio or clang under visual
-     * studio.
-     */
-    #if SIMDUTF_USING_LIBRARY
-      #define SIMDUTF_DLLIMPORTEXPORT __declspec(dllimport)
-    #else
-      #define SIMDUTF_DLLIMPORTEXPORT __declspec(dllexport)
-    #endif
-  #else
-    #define SIMDUTF_DLLIMPORTEXPORT
-  #endif
+#if defined(SIMDUTF_VISUAL_STUDIO)
+/**
+ * It does not matter here whether you are using
+ * the regular visual studio or clang under visual
+ * studio.
+ */
+#if SIMDUTF_USING_LIBRARY
+#define SIMDUTF_DLLIMPORTEXPORT __declspec(dllimport)
+#else
+#define SIMDUTF_DLLIMPORTEXPORT __declspec(dllexport)
+#endif
+#else
+#define SIMDUTF_DLLIMPORTEXPORT
+#endif
 #endif
 
 #if SIMDUTF_MAYBE_UNUSED_AVAILABLE
-  #define simdutf_maybe_unused [[maybe_unused]]
+#define simdutf_maybe_unused [[maybe_unused]]
 #else
-  #define simdutf_maybe_unused
+#define simdutf_maybe_unused
 #endif
 
 #endif // SIMDUTF_COMMON_DEFS_H
@@ -747,11 +746,11 @@ enum {
 #ifndef SIMDUTF_IMPLEMENTATION_H
 #define SIMDUTF_IMPLEMENTATION_H
 #if !defined(SIMDUTF_NO_THREADS)
-  #include <atomic>
+#include <atomic>
 #endif
 #include <string>
 #ifdef SIMDUTF_INTERNAL_TESTS
-  #include <vector>
+#include <vector>
 #endif
 /* begin file include/simdutf/internal/isadetection.h */
 /* From
@@ -805,28 +804,27 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <cstdint>
 #include <cstdlib>
 #if defined(_MSC_VER)
-  #include <intrin.h>
+#include <intrin.h>
 #elif defined(HAVE_GCC_GET_CPUID) && defined(USE_GCC_GET_CPUID)
-  #include <cpuid.h>
+#include <cpuid.h>
 #endif
-
 
 // RISC-V ISA detection utilities
 #if SIMDUTF_IS_RISCV64 && defined(__linux__)
-  #include <unistd.h> // for syscall
+#include <unistd.h> // for syscall
 // We define these ourselves, for backwards compatibility
 struct simdutf_riscv_hwprobe {
   int64_t key;
   uint64_t value;
 };
-  #define simdutf_riscv_hwprobe(...) syscall(258, __VA_ARGS__)
-  #define SIMDUTF_RISCV_HWPROBE_KEY_IMA_EXT_0 4
-  #define SIMDUTF_RISCV_HWPROBE_IMA_V (1 << 2)
-  #define SIMDUTF_RISCV_HWPROBE_EXT_ZVBB (1 << 17)
+#define simdutf_riscv_hwprobe(...) syscall(258, __VA_ARGS__)
+#define SIMDUTF_RISCV_HWPROBE_KEY_IMA_EXT_0 4
+#define SIMDUTF_RISCV_HWPROBE_IMA_V (1 << 2)
+#define SIMDUTF_RISCV_HWPROBE_EXT_ZVBB (1 << 17)
 #endif // SIMDUTF_IS_RISCV64 && defined(__linux__)
 
 #if defined(__loongarch__) && defined(__linux__)
-  #include <sys/auxv.h>
+#include <sys/auxv.h>
 // bits/hwcap.h
 // #define HWCAP_LOONGARCH_LSX             (1 << 4)
 // #define HWCAP_LOONGARCH_LASX            (1 << 5)
@@ -870,13 +868,13 @@ static inline uint32_t detect_supported_architectures() {
 
 static inline uint32_t detect_supported_architectures() {
   uint32_t host_isa = instruction_set::DEFAULT;
-  #if SIMDUTF_IS_RVV
+#if SIMDUTF_IS_RVV
   host_isa |= instruction_set::RVV;
-  #endif
-  #if SIMDUTF_IS_ZVBB
+#endif
+#if SIMDUTF_IS_ZVBB
   host_isa |= instruction_set::ZVBB;
-  #endif
-  #if defined(__linux__)
+#endif
+#if defined(__linux__)
   simdutf_riscv_hwprobe probes[] = {{SIMDUTF_RISCV_HWPROBE_KEY_IMA_EXT_0, 0}};
   long ret = simdutf_riscv_hwprobe(&probes, sizeof probes / sizeof *probes, 0,
                                    nullptr, 0);
@@ -887,11 +885,11 @@ static inline uint32_t detect_supported_architectures() {
     if (extensions & SIMDUTF_RISCV_HWPROBE_EXT_ZVBB)
       host_isa |= instruction_set::ZVBB;
   }
-  #endif
-  #if defined(RUN_IN_SPIKE_SIMULATOR)
+#endif
+#if defined(RUN_IN_SPIKE_SIMULATOR)
   // Proxy Kernel does not implement yet hwprobe syscall
   host_isa |= instruction_set::RVV;
-  #endif
+#endif
   return host_isa;
 }
 
@@ -950,34 +948,34 @@ constexpr uint64_t avx512_saved =
 
 static inline void cpuid(uint32_t *eax, uint32_t *ebx, uint32_t *ecx,
                          uint32_t *edx) {
-  #if defined(_MSC_VER)
+#if defined(_MSC_VER)
   int cpu_info[4];
   __cpuidex(cpu_info, *eax, *ecx);
   *eax = cpu_info[0];
   *ebx = cpu_info[1];
   *ecx = cpu_info[2];
   *edx = cpu_info[3];
-  #elif defined(HAVE_GCC_GET_CPUID) && defined(USE_GCC_GET_CPUID)
+#elif defined(HAVE_GCC_GET_CPUID) && defined(USE_GCC_GET_CPUID)
   uint32_t level = *eax;
   __get_cpuid(level, eax, ebx, ecx, edx);
-  #else
+#else
   uint32_t a = *eax, b, c = *ecx, d;
   asm volatile("cpuid\n\t" : "+a"(a), "=b"(b), "+c"(c), "=d"(d));
   *eax = a;
   *ebx = b;
   *ecx = c;
   *edx = d;
-  #endif
+#endif
 }
 
 static inline uint64_t xgetbv() {
-  #if defined(_MSC_VER)
+#if defined(_MSC_VER)
   return _xgetbv(0);
-  #else
+#else
   uint32_t xcr0_lo, xcr0_hi;
   asm volatile("xgetbv\n\t" : "=a"(xcr0_lo), "=d"(xcr0_hi) : "c"(0));
   return xcr0_lo | ((uint64_t)xcr0_hi << 32);
-  #endif
+#endif
 }
 
 static inline uint32_t detect_supported_architectures() {
@@ -1053,7 +1051,7 @@ static inline uint32_t detect_supported_architectures() {
 
 static inline uint32_t detect_supported_architectures() {
   uint32_t host_isa = instruction_set::DEFAULT;
-  #if defined(__linux__)
+#if defined(__linux__)
   uint64_t hwcap = 0;
   hwcap = getauxval(AT_HWCAP);
   if (hwcap & HWCAP_LOONGARCH_LSX) {
@@ -1062,7 +1060,7 @@ static inline uint32_t detect_supported_architectures() {
   if (hwcap & HWCAP_LOONGARCH_LASX) {
     host_isa |= instruction_set::LASX;
   }
-  #endif
+#endif
   return host_isa;
 }
 #else // fallback
@@ -1081,13 +1079,13 @@ static inline uint32_t detect_supported_architectures() {
 /* end file include/simdutf/internal/isadetection.h */
 
 #if SIMDUTF_SPAN
-  #include <concepts>
-  #include <type_traits>
-  #include <span>
-  #include <tuple>
+#include <concepts>
+#include <span>
+#include <tuple>
+#include <type_traits>
 #endif
 #if SIMDUTF_CPLUSPLUS17
-  #include <string_view>
+#include <string_view>
 #endif
 // The following defines are conditionally enabled/disabled during amalgamation.
 // By default all features are enabled, regular code shouldn't check them. Only
@@ -1172,7 +1170,7 @@ simdutf_really_inline simdutf_warn_unused simdutf::encoding_type
 autodetect_encoding(const uint8_t *input, size_t length) noexcept {
   return autodetect_encoding(reinterpret_cast<const char *>(input), length);
 }
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 /**
  * Autodetect the encoding of the input, a single encoding is recommended.
  * E.g., the function might return simdutf::encoding_type::UTF8,
@@ -1190,7 +1188,7 @@ autodetect_encoding(
   return autodetect_encoding(reinterpret_cast<const char *>(input.data()),
                              input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Autodetect the possible encodings of the input in one pass.
@@ -1209,14 +1207,14 @@ simdutf_really_inline simdutf_warn_unused int
 detect_encodings(const uint8_t *input, size_t length) noexcept {
   return detect_encodings(reinterpret_cast<const char *>(input), length);
 }
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused int
 detect_encodings(const detail::input_span_of_byte_like auto &input) noexcept {
   return detect_encodings(reinterpret_cast<const char *>(input.data()),
                           input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_DETECT_ENCODING
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_DETECT_ENCODING
 
 #if SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
 /**
@@ -1231,14 +1229,14 @@ detect_encodings(const detail::input_span_of_byte_like auto &input) noexcept {
  * @return true if and only if the string is valid UTF-8.
  */
 simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused bool
 validate_utf8(const detail::input_span_of_byte_like auto &input) noexcept {
   return validate_utf8(reinterpret_cast<const char *>(input.data()),
                        input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
 
 #if SIMDUTF_FEATURE_UTF8
 /**
@@ -1255,14 +1253,14 @@ validate_utf8(const detail::input_span_of_byte_like auto &input) noexcept {
  */
 simdutf_warn_unused result validate_utf8_with_errors(const char *buf,
                                                      size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result validate_utf8_with_errors(
     const detail::input_span_of_byte_like auto &input) noexcept {
   return validate_utf8_with_errors(reinterpret_cast<const char *>(input.data()),
                                    input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8
 
 #if SIMDUTF_FEATURE_ASCII
 /**
@@ -1275,13 +1273,13 @@ simdutf_really_inline simdutf_warn_unused result validate_utf8_with_errors(
  * @return true if and only if the string is valid ASCII.
  */
 simdutf_warn_unused bool validate_ascii(const char *buf, size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused bool
 validate_ascii(const detail::input_span_of_byte_like auto &input) noexcept {
   return validate_ascii(reinterpret_cast<const char *>(input.data()),
                         input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Validate the ASCII string and stop on error. It might be faster than
@@ -1298,14 +1296,14 @@ validate_ascii(const detail::input_span_of_byte_like auto &input) noexcept {
  */
 simdutf_warn_unused result validate_ascii_with_errors(const char *buf,
                                                       size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result validate_ascii_with_errors(
     const detail::input_span_of_byte_like auto &input) noexcept {
   return validate_ascii_with_errors(
       reinterpret_cast<const char *>(input.data()), input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_ASCII
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16
 /**
@@ -1324,13 +1322,13 @@ simdutf_really_inline simdutf_warn_unused result validate_ascii_with_errors(
  */
 simdutf_warn_unused bool validate_utf16(const char16_t *buf,
                                         size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused bool
 validate_utf16(std::span<const char16_t> input) noexcept {
   return validate_utf16(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 /**
@@ -1349,13 +1347,13 @@ validate_utf16(std::span<const char16_t> input) noexcept {
  */
 simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
                                           size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused bool
 validate_utf16le(std::span<const char16_t> input) noexcept {
   return validate_utf16le(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 
 #if SIMDUTF_FEATURE_UTF16
 /**
@@ -1374,12 +1372,12 @@ validate_utf16le(std::span<const char16_t> input) noexcept {
  */
 simdutf_warn_unused bool validate_utf16be(const char16_t *buf,
                                           size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused bool
 validate_utf16be(std::span<const char16_t> input) noexcept {
   return validate_utf16be(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness; Validate the UTF-16 string and stop on error.
@@ -1400,12 +1398,12 @@ validate_utf16be(std::span<const char16_t> input) noexcept {
  */
 simdutf_warn_unused result validate_utf16_with_errors(const char16_t *buf,
                                                       size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 validate_utf16_with_errors(std::span<const char16_t> input) noexcept {
   return validate_utf16_with_errors(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Validate the UTF-16LE string and stop on error. It might be faster than
@@ -1425,12 +1423,12 @@ validate_utf16_with_errors(std::span<const char16_t> input) noexcept {
  */
 simdutf_warn_unused result validate_utf16le_with_errors(const char16_t *buf,
                                                         size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 validate_utf16le_with_errors(std::span<const char16_t> input) noexcept {
   return validate_utf16le_with_errors(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Validate the UTF-16BE string and stop on error. It might be faster than
@@ -1450,12 +1448,12 @@ validate_utf16le_with_errors(std::span<const char16_t> input) noexcept {
  */
 simdutf_warn_unused result validate_utf16be_with_errors(const char16_t *buf,
                                                         size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 validate_utf16be_with_errors(std::span<const char16_t> input) noexcept {
   return validate_utf16be_with_errors(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Fixes an ill-formed UTF-16LE string by replacing mismatched surrogates with
@@ -1471,13 +1469,13 @@ validate_utf16be_with_errors(std::span<const char16_t> input) noexcept {
  */
 void to_well_formed_utf16le(const char16_t *input, size_t len,
                             char16_t *output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline void
 to_well_formed_utf16le(std::span<const char16_t> input,
                        std::span<char16_t> output) noexcept {
   to_well_formed_utf16le(input.data(), input.size(), output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Fixes an ill-formed UTF-16BE string by replacing mismatched surrogates with
@@ -1493,13 +1491,13 @@ to_well_formed_utf16le(std::span<const char16_t> input,
  */
 void to_well_formed_utf16be(const char16_t *input, size_t len,
                             char16_t *output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline void
 to_well_formed_utf16be(std::span<const char16_t> input,
                        std::span<char16_t> output) noexcept {
   to_well_formed_utf16be(input.data(), input.size(), output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Fixes an ill-formed UTF-16 string by replacing mismatched surrogates with the
@@ -1515,13 +1513,13 @@ to_well_formed_utf16be(std::span<const char16_t> input,
  */
 void to_well_formed_utf16(const char16_t *input, size_t len,
                           char16_t *output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline void
 to_well_formed_utf16(std::span<const char16_t> input,
                      std::span<char16_t> output) noexcept {
   to_well_formed_utf16(input.data(), input.size(), output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 #endif // SIMDUTF_FEATURE_UTF16
 
@@ -1542,13 +1540,13 @@ to_well_formed_utf16(std::span<const char16_t> input,
  */
 simdutf_warn_unused bool validate_utf32(const char32_t *buf,
                                         size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused bool
 validate_utf32(std::span<const char32_t> input) noexcept {
   return validate_utf32(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF32 || SIMDUTF_FEATURE_DETECT_ENCODING
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF32 || SIMDUTF_FEATURE_DETECT_ENCODING
 
 #if SIMDUTF_FEATURE_UTF32
 /**
@@ -1569,13 +1567,13 @@ validate_utf32(std::span<const char32_t> input) noexcept {
  */
 simdutf_warn_unused result validate_utf32_with_errors(const char32_t *buf,
                                                       size_t len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 validate_utf32_with_errors(std::span<const char32_t> input) noexcept {
   return validate_utf32_with_errors(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -1591,7 +1589,7 @@ validate_utf32_with_errors(std::span<const char32_t> input) noexcept {
 simdutf_warn_unused size_t convert_latin1_to_utf8(const char *input,
                                                   size_t length,
                                                   char *utf8_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8(
     const detail::input_span_of_byte_like auto &latin1_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
@@ -1599,7 +1597,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8(
       reinterpret_cast<const char *>(latin1_input.data()), latin1_input.size(),
       utf8_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert Latin1 string into UTF8 string with output limit.
@@ -1617,7 +1615,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8(
 simdutf_warn_unused size_t
 convert_latin1_to_utf8_safe(const char *input, size_t length, char *utf8_output,
                             size_t utf8_len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8_safe(
     const detail::input_span_of_byte_like auto &input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
@@ -1631,8 +1629,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8_safe(
       input.data(), input.size(), reinterpret_cast<char *>(utf8_output.data()),
       utf8_output.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -1647,7 +1645,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8_safe(
  */
 simdutf_warn_unused size_t convert_latin1_to_utf16le(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf16le(
     const detail::input_span_of_byte_like auto &latin1_input,
     std::span<char16_t> utf16_output) noexcept {
@@ -1655,7 +1653,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf16le(
       reinterpret_cast<const char *>(latin1_input.data()), latin1_input.size(),
       utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert Latin1 string into UTF-16BE string.
@@ -1669,14 +1667,14 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf16le(
  */
 simdutf_warn_unused size_t convert_latin1_to_utf16be(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_latin1_to_utf16be(const detail::input_span_of_byte_like auto &input,
                           std::span<char16_t> output) noexcept {
   return convert_latin1_to_utf16be(reinterpret_cast<const char *>(input.data()),
                                    input.size(), output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 /**
  * Compute the number of bytes that this UTF-16 string would require in Latin1
  * format.
@@ -1711,7 +1709,7 @@ simdutf_warn_unused size_t utf16_length_from_latin1(size_t length) noexcept;
  */
 simdutf_warn_unused size_t convert_latin1_to_utf32(
     const char *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf32(
     const detail::input_span_of_byte_like auto &latin1_input,
     std::span<char32_t> utf32_output) noexcept {
@@ -1719,8 +1717,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf32(
       reinterpret_cast<const char *>(latin1_input.data()), latin1_input.size(),
       utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -1738,7 +1736,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf32(
 simdutf_warn_unused size_t convert_utf8_to_latin1(const char *input,
                                                   size_t length,
                                                   char *latin1_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf8_to_latin1(
     const detail::input_span_of_byte_like auto &input,
     detail::output_span_of_byte_like auto &&output) noexcept {
@@ -1746,8 +1744,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf8_to_latin1(
                                 input.size(),
                                 reinterpret_cast<char *>(output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -1765,15 +1763,15 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf8_to_latin1(
  */
 simdutf_warn_unused size_t convert_utf8_to_utf16(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf8_to_utf16(const detail::input_span_of_byte_like auto &input,
                       std::span<char16_t> output) noexcept {
   return convert_utf8_to_utf16(reinterpret_cast<const char *>(input.data()),
                                input.size(), output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -1786,15 +1784,15 @@ convert_utf8_to_utf16(const detail::input_span_of_byte_like auto &input,
  */
 simdutf_warn_unused size_t convert_latin1_to_utf16(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_latin1_to_utf16(const detail::input_span_of_byte_like auto &input,
                         std::span<char16_t> output) noexcept {
   return convert_latin1_to_utf16(reinterpret_cast<const char *>(input.data()),
                                  input.size(), output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -1811,7 +1809,7 @@ convert_latin1_to_utf16(const detail::input_span_of_byte_like auto &input,
  */
 simdutf_warn_unused size_t convert_utf8_to_utf16le(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf8_to_utf16le(const detail::input_span_of_byte_like auto &utf8_input,
                         std::span<char16_t> utf16_output) noexcept {
@@ -1819,7 +1817,7 @@ convert_utf8_to_utf16le(const detail::input_span_of_byte_like auto &utf8_input,
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-8 string into UTF-16BE string.
@@ -1835,7 +1833,7 @@ convert_utf8_to_utf16le(const detail::input_span_of_byte_like auto &utf8_input,
  */
 simdutf_warn_unused size_t convert_utf8_to_utf16be(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf8_to_utf16be(const detail::input_span_of_byte_like auto &utf8_input,
                         std::span<char16_t> utf16_output) noexcept {
@@ -1843,8 +1841,8 @@ convert_utf8_to_utf16be(const detail::input_span_of_byte_like auto &utf8_input,
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -1865,7 +1863,7 @@ convert_utf8_to_utf16be(const detail::input_span_of_byte_like auto &utf8_input,
  */
 simdutf_warn_unused result convert_utf8_to_latin1_with_errors(
     const char *input, size_t length, char *latin1_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf8_to_latin1_with_errors(
     const detail::input_span_of_byte_like auto &utf8_input,
@@ -1874,8 +1872,8 @@ convert_utf8_to_latin1_with_errors(
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -1895,7 +1893,7 @@ convert_utf8_to_latin1_with_errors(
  */
 simdutf_warn_unused result convert_utf8_to_utf16_with_errors(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf8_to_utf16_with_errors(
     const detail::input_span_of_byte_like auto &utf8_input,
@@ -1904,7 +1902,7 @@ convert_utf8_to_utf16_with_errors(
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-8 string into UTF-16LE string and stop on error.
@@ -1922,7 +1920,7 @@ convert_utf8_to_utf16_with_errors(
  */
 simdutf_warn_unused result convert_utf8_to_utf16le_with_errors(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf8_to_utf16le_with_errors(
     const detail::input_span_of_byte_like auto &utf8_input,
@@ -1931,7 +1929,7 @@ convert_utf8_to_utf16le_with_errors(
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-8 string into UTF-16BE string and stop on error.
@@ -1949,7 +1947,7 @@ convert_utf8_to_utf16le_with_errors(
  */
 simdutf_warn_unused result convert_utf8_to_utf16be_with_errors(
     const char *input, size_t length, char16_t *utf16_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf8_to_utf16be_with_errors(
     const detail::input_span_of_byte_like auto &utf8_input,
@@ -1958,8 +1956,8 @@ convert_utf8_to_utf16be_with_errors(
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 /**
@@ -1976,7 +1974,7 @@ convert_utf8_to_utf16be_with_errors(
  */
 simdutf_warn_unused size_t convert_utf8_to_utf32(
     const char *input, size_t length, char32_t *utf32_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf8_to_utf32(const detail::input_span_of_byte_like auto &utf8_input,
                       std::span<char32_t> utf32_output) noexcept {
@@ -1984,7 +1982,7 @@ convert_utf8_to_utf32(const detail::input_span_of_byte_like auto &utf8_input,
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-8 string into UTF-32 string and stop on error.
@@ -2002,7 +2000,7 @@ convert_utf8_to_utf32(const detail::input_span_of_byte_like auto &utf8_input,
  */
 simdutf_warn_unused result convert_utf8_to_utf32_with_errors(
     const char *input, size_t length, char32_t *utf32_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf8_to_utf32_with_errors(
     const detail::input_span_of_byte_like auto &utf8_input,
@@ -2011,8 +2009,8 @@ convert_utf8_to_utf32_with_errors(
       reinterpret_cast<const char *>(utf8_input.data()), utf8_input.size(),
       utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -2036,7 +2034,7 @@ convert_utf8_to_utf32_with_errors(
  */
 simdutf_warn_unused size_t convert_valid_utf8_to_latin1(
     const char *input, size_t length, char *latin1_output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_latin1(
     const detail::input_span_of_byte_like auto &valid_utf8_input,
     detail::output_span_of_byte_like auto &&latin1_output) noexcept {
@@ -2044,8 +2042,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_latin1(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size(), latin1_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -2060,7 +2058,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_latin1(
  */
 simdutf_warn_unused size_t convert_valid_utf8_to_utf16(
     const char *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16(
     const detail::input_span_of_byte_like auto &valid_utf8_input,
     std::span<char16_t> utf16_output) noexcept {
@@ -2068,7 +2066,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-8 string into UTF-16LE string.
@@ -2082,7 +2080,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16(
  */
 simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(
     const char *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(
     const detail::input_span_of_byte_like auto &valid_utf8_input,
     std::span<char16_t> utf16_output) noexcept {
@@ -2090,7 +2088,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-8 string into UTF-16BE string.
@@ -2104,7 +2102,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(
  */
 simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(
     const char *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(
     const detail::input_span_of_byte_like auto &valid_utf8_input,
     std::span<char16_t> utf16_output) noexcept {
@@ -2112,8 +2110,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 /**
@@ -2128,7 +2126,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(
  */
 simdutf_warn_unused size_t convert_valid_utf8_to_utf32(
     const char *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf32(
     const detail::input_span_of_byte_like auto &valid_utf8_input,
     std::span<char32_t> utf32_output) noexcept {
@@ -2136,8 +2134,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf32(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size(), utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -2150,13 +2148,13 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf8_to_utf32(
  */
 simdutf_warn_unused size_t utf8_length_from_latin1(const char *input,
                                                    size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t utf8_length_from_latin1(
     const detail::input_span_of_byte_like auto &latin1_input) noexcept {
   return utf8_length_from_latin1(
       reinterpret_cast<const char *>(latin1_input.data()), latin1_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Compute the number of bytes that this UTF-8 string would require in Latin1
@@ -2173,15 +2171,15 @@ simdutf_really_inline simdutf_warn_unused size_t utf8_length_from_latin1(
  */
 simdutf_warn_unused size_t latin1_length_from_utf8(const char *input,
                                                    size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t latin1_length_from_utf8(
     const detail::input_span_of_byte_like auto &valid_utf8_input) noexcept {
   return latin1_length_from_utf8(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -2200,15 +2198,15 @@ simdutf_really_inline simdutf_warn_unused size_t latin1_length_from_utf8(
  */
 simdutf_warn_unused size_t utf16_length_from_utf8(const char *input,
                                                   size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t utf16_length_from_utf8(
     const detail::input_span_of_byte_like auto &valid_utf8_input) noexcept {
   return utf16_length_from_utf8(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 /**
@@ -2229,15 +2227,15 @@ simdutf_really_inline simdutf_warn_unused size_t utf16_length_from_utf8(
  */
 simdutf_warn_unused size_t utf32_length_from_utf8(const char *input,
                                                   size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t utf32_length_from_utf8(
     const detail::input_span_of_byte_like auto &valid_utf8_input) noexcept {
   return utf32_length_from_utf8(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -2258,14 +2256,14 @@ simdutf_really_inline simdutf_warn_unused size_t utf32_length_from_utf8(
 simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t *input,
                                                  size_t length,
                                                  char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf16_to_utf8(
     std::span<const char16_t> utf16_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
   return convert_utf16_to_utf8(utf16_input.data(), utf16_input.size(),
                                reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness, convert possibly broken UTF-16 string into UTF-8
@@ -2289,7 +2287,7 @@ simdutf_warn_unused size_t convert_utf16_to_utf8_safe(const char16_t *input,
                                                       size_t length,
                                                       char *utf8_output,
                                                       size_t utf8_len) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf16_to_utf8_safe(
     std::span<const char16_t> utf16_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
@@ -2303,8 +2301,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16_to_utf8_safe(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(utf8_output.data()), utf8_output.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -2324,7 +2322,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16_to_utf8_safe(
  */
 simdutf_warn_unused size_t convert_utf16_to_latin1(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf16_to_latin1(
     std::span<const char16_t> utf16_input,
     detail::output_span_of_byte_like auto &&latin1_output) noexcept {
@@ -2332,7 +2330,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16_to_latin1(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16LE string into Latin1 string.
@@ -2352,7 +2350,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16_to_latin1(
  */
 simdutf_warn_unused size_t convert_utf16le_to_latin1(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf16le_to_latin1(
     std::span<const char16_t> utf16_input,
     detail::output_span_of_byte_like auto &&latin1_output) noexcept {
@@ -2360,7 +2358,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16le_to_latin1(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16BE string into Latin1 string.
@@ -2378,7 +2376,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16le_to_latin1(
  */
 simdutf_warn_unused size_t convert_utf16be_to_latin1(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf16be_to_latin1(
     std::span<const char16_t> utf16_input,
     detail::output_span_of_byte_like auto &&latin1_output) noexcept {
@@ -2386,8 +2384,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16be_to_latin1(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -2407,14 +2405,14 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16be_to_latin1(
 simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t *input,
                                                    size_t length,
                                                    char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf16le_to_utf8(
     std::span<const char16_t> utf16_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
   return convert_utf16le_to_utf8(utf16_input.data(), utf16_input.size(),
                                  reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16BE string into UTF-8 string.
@@ -2433,15 +2431,15 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16le_to_utf8(
 simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t *input,
                                                    size_t length,
                                                    char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf16be_to_utf8(
     std::span<const char16_t> utf16_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
   return convert_utf16be_to_utf8(utf16_input.data(), utf16_input.size(),
                                  reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -2462,7 +2460,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf16be_to_utf8(
  */
 simdutf_warn_unused result convert_utf16_to_latin1_with_errors(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16_to_latin1_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2471,7 +2469,7 @@ convert_utf16_to_latin1_with_errors(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16LE string into Latin1 string.
@@ -2490,7 +2488,7 @@ convert_utf16_to_latin1_with_errors(
  */
 simdutf_warn_unused result convert_utf16le_to_latin1_with_errors(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16le_to_latin1_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2499,7 +2497,7 @@ convert_utf16le_to_latin1_with_errors(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16BE string into Latin1 string.
@@ -2520,7 +2518,7 @@ convert_utf16le_to_latin1_with_errors(
  */
 simdutf_warn_unused result convert_utf16be_to_latin1_with_errors(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16be_to_latin1_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2529,8 +2527,8 @@ convert_utf16be_to_latin1_with_errors(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -2552,7 +2550,7 @@ convert_utf16be_to_latin1_with_errors(
  */
 simdutf_warn_unused result convert_utf16_to_utf8_with_errors(
     const char16_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16_to_utf8_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2561,7 +2559,7 @@ convert_utf16_to_utf8_with_errors(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16LE string into UTF-8 string and stop on error.
@@ -2581,7 +2579,7 @@ convert_utf16_to_utf8_with_errors(
  */
 simdutf_warn_unused result convert_utf16le_to_utf8_with_errors(
     const char16_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16le_to_utf8_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2590,7 +2588,7 @@ convert_utf16le_to_utf8_with_errors(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16BE string into UTF-8 string and stop on error.
@@ -2610,7 +2608,7 @@ convert_utf16le_to_utf8_with_errors(
  */
 simdutf_warn_unused result convert_utf16be_to_utf8_with_errors(
     const char16_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16be_to_utf8_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2619,7 +2617,7 @@ convert_utf16be_to_utf8_with_errors(
       utf16_input.data(), utf16_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness, convert valid UTF-16 string into UTF-8 string.
@@ -2636,7 +2634,7 @@ convert_utf16be_to_utf8_with_errors(
  */
 simdutf_warn_unused size_t convert_valid_utf16_to_utf8(
     const char16_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16_to_utf8(
     std::span<const char16_t> valid_utf16_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
@@ -2644,8 +2642,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16_to_utf8(
       valid_utf16_input.data(), valid_utf16_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -2669,7 +2667,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16_to_utf8(
  */
 simdutf_warn_unused size_t convert_valid_utf16_to_latin1(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16_to_latin1(
     std::span<const char16_t> valid_utf16_input,
     detail::output_span_of_byte_like auto &&latin1_output) noexcept {
@@ -2677,7 +2675,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16_to_latin1(
       valid_utf16_input.data(), valid_utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-16LE string into Latin1 string.
@@ -2700,7 +2698,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16_to_latin1(
  */
 simdutf_warn_unused size_t convert_valid_utf16le_to_latin1(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf16le_to_latin1(
     std::span<const char16_t> valid_utf16_input,
@@ -2709,7 +2707,7 @@ convert_valid_utf16le_to_latin1(
       valid_utf16_input.data(), valid_utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-16BE string into Latin1 string.
@@ -2732,7 +2730,7 @@ convert_valid_utf16le_to_latin1(
  */
 simdutf_warn_unused size_t convert_valid_utf16be_to_latin1(
     const char16_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf16be_to_latin1(
     std::span<const char16_t> valid_utf16_input,
@@ -2741,8 +2739,8 @@ convert_valid_utf16be_to_latin1(
       valid_utf16_input.data(), valid_utf16_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -2761,7 +2759,7 @@ convert_valid_utf16be_to_latin1(
  */
 simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(
     const char16_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(
     std::span<const char16_t> valid_utf16_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
@@ -2769,7 +2767,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(
       valid_utf16_input.data(), valid_utf16_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-16BE string into UTF-8 string.
@@ -2786,7 +2784,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(
  */
 simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(
     const char16_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(
     std::span<const char16_t> valid_utf16_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
@@ -2794,8 +2792,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(
       valid_utf16_input.data(), valid_utf16_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 /**
@@ -2815,14 +2813,14 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(
  */
 simdutf_warn_unused size_t convert_utf16_to_utf32(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf16_to_utf32(std::span<const char16_t> utf16_input,
                        std::span<char32_t> utf32_output) noexcept {
   return convert_utf16_to_utf32(utf16_input.data(), utf16_input.size(),
                                 utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16LE string into UTF-32 string.
@@ -2840,14 +2838,14 @@ convert_utf16_to_utf32(std::span<const char16_t> utf16_input,
  */
 simdutf_warn_unused size_t convert_utf16le_to_utf32(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf16le_to_utf32(std::span<const char16_t> utf16_input,
                          std::span<char32_t> utf32_output) noexcept {
   return convert_utf16le_to_utf32(utf16_input.data(), utf16_input.size(),
                                   utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16BE string into UTF-32 string.
@@ -2865,14 +2863,14 @@ convert_utf16le_to_utf32(std::span<const char16_t> utf16_input,
  */
 simdutf_warn_unused size_t convert_utf16be_to_utf32(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf16be_to_utf32(std::span<const char16_t> utf16_input,
                          std::span<char32_t> utf32_output) noexcept {
   return convert_utf16be_to_utf32(utf16_input.data(), utf16_input.size(),
                                   utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness, convert possibly broken UTF-16 string into
@@ -2893,14 +2891,14 @@ convert_utf16be_to_utf32(std::span<const char16_t> utf16_input,
  */
 simdutf_warn_unused result convert_utf16_to_utf32_with_errors(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16_to_utf32_with_errors(std::span<const char16_t> utf16_input,
                                    std::span<char32_t> utf32_output) noexcept {
   return convert_utf16_to_utf32_with_errors(
       utf16_input.data(), utf16_input.size(), utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16LE string into UTF-32 string and stop on error.
@@ -2920,7 +2918,7 @@ convert_utf16_to_utf32_with_errors(std::span<const char16_t> utf16_input,
  */
 simdutf_warn_unused result convert_utf16le_to_utf32_with_errors(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16le_to_utf32_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2928,7 +2926,7 @@ convert_utf16le_to_utf32_with_errors(
   return convert_utf16le_to_utf32_with_errors(
       utf16_input.data(), utf16_input.size(), utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-16BE string into UTF-32 string and stop on error.
@@ -2948,7 +2946,7 @@ convert_utf16le_to_utf32_with_errors(
  */
 simdutf_warn_unused result convert_utf16be_to_utf32_with_errors(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf16be_to_utf32_with_errors(
     std::span<const char16_t> utf16_input,
@@ -2956,7 +2954,7 @@ convert_utf16be_to_utf32_with_errors(
   return convert_utf16be_to_utf32_with_errors(
       utf16_input.data(), utf16_input.size(), utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness, convert valid UTF-16 string into UTF-32 string.
@@ -2974,14 +2972,14 @@ convert_utf16be_to_utf32_with_errors(
  */
 simdutf_warn_unused size_t convert_valid_utf16_to_utf32(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf16_to_utf32(std::span<const char16_t> valid_utf16_input,
                              std::span<char32_t> utf32_output) noexcept {
   return convert_valid_utf16_to_utf32(
       valid_utf16_input.data(), valid_utf16_input.size(), utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-16LE string into UTF-32 string.
@@ -2998,14 +2996,14 @@ convert_valid_utf16_to_utf32(std::span<const char16_t> valid_utf16_input,
  */
 simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf16le_to_utf32(std::span<const char16_t> valid_utf16_input,
                                std::span<char32_t> utf32_output) noexcept {
   return convert_valid_utf16le_to_utf32(
       valid_utf16_input.data(), valid_utf16_input.size(), utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-16BE string into UTF-32 string.
@@ -3022,15 +3020,15 @@ convert_valid_utf16le_to_utf32(std::span<const char16_t> valid_utf16_input,
  */
 simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(
     const char16_t *input, size_t length, char32_t *utf32_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf16be_to_utf32(std::span<const char16_t> valid_utf16_input,
                                std::span<char32_t> utf32_output) noexcept {
   return convert_valid_utf16be_to_utf32(
       valid_utf16_input.data(), valid_utf16_input.size(), utf32_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -3060,14 +3058,14 @@ simdutf_warn_unused size_t latin1_length_from_utf16(size_t length) noexcept;
  */
 simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t *input,
                                                   size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 utf8_length_from_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
   return utf8_length_from_utf16(valid_utf16_input.data(),
                                 valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
@@ -3083,13 +3081,13 @@ utf8_length_from_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t *input,
                                                     size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 utf8_length_from_utf16le(std::span<const char16_t> valid_utf16_input) noexcept {
   return utf8_length_from_utf16le(valid_utf16_input.data(),
                                   valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Compute the number of bytes that this UTF-16BE string would require in UTF-8
@@ -3104,14 +3102,14 @@ utf8_length_from_utf16le(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t *input,
                                                     size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 utf8_length_from_utf16be(std::span<const char16_t> valid_utf16_input) noexcept {
   return utf8_length_from_utf16be(valid_utf16_input.data(),
                                   valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 /**
@@ -3130,14 +3128,14 @@ utf8_length_from_utf16be(std::span<const char16_t> valid_utf16_input) noexcept {
 simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t *input,
                                                  size_t length,
                                                  char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf32_to_utf8(
     std::span<const char32_t> utf32_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
   return convert_utf32_to_utf8(utf32_input.data(), utf32_input.size(),
                                reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-32 string into UTF-8 string and stop on error.
@@ -3157,7 +3155,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf32_to_utf8(
  */
 simdutf_warn_unused result convert_utf32_to_utf8_with_errors(
     const char32_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf32_to_utf8_with_errors(
     std::span<const char32_t> utf32_input,
@@ -3166,7 +3164,7 @@ convert_utf32_to_utf8_with_errors(
       utf32_input.data(), utf32_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-32 string into UTF-8 string.
@@ -3183,7 +3181,7 @@ convert_utf32_to_utf8_with_errors(
  */
 simdutf_warn_unused size_t convert_valid_utf32_to_utf8(
     const char32_t *input, size_t length, char *utf8_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf32_to_utf8(
     std::span<const char32_t> valid_utf32_input,
     detail::output_span_of_byte_like auto &&utf8_output) noexcept {
@@ -3191,8 +3189,8 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf32_to_utf8(
       valid_utf32_input.data(), valid_utf32_input.size(),
       reinterpret_cast<char *>(utf8_output.data()));
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 /**
@@ -3211,14 +3209,14 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf32_to_utf8(
  */
 simdutf_warn_unused size_t convert_utf32_to_utf16(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf32_to_utf16(std::span<const char32_t> utf32_input,
                        std::span<char16_t> utf16_output) noexcept {
   return convert_utf32_to_utf16(utf32_input.data(), utf32_input.size(),
                                 utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-32 string into UTF-16LE string.
@@ -3235,15 +3233,15 @@ convert_utf32_to_utf16(std::span<const char32_t> utf32_input,
  */
 simdutf_warn_unused size_t convert_utf32_to_utf16le(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf32_to_utf16le(std::span<const char32_t> utf32_input,
                          std::span<char16_t> utf16_output) noexcept {
   return convert_utf32_to_utf16le(utf32_input.data(), utf32_input.size(),
                                   utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -3262,7 +3260,7 @@ convert_utf32_to_utf16le(std::span<const char32_t> utf32_input,
  */
 simdutf_warn_unused size_t convert_utf32_to_latin1(
     const char32_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_utf32_to_latin1(
     std::span<const char32_t> utf32_input,
     detail::output_span_of_byte_like auto &&latin1_output) noexcept {
@@ -3270,7 +3268,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf32_to_latin1(
       utf32_input.data(), utf32_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-32 string into Latin1 string and stop on error.
@@ -3291,7 +3289,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_utf32_to_latin1(
  */
 simdutf_warn_unused result convert_utf32_to_latin1_with_errors(
     const char32_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf32_to_latin1_with_errors(
     std::span<const char32_t> utf32_input,
@@ -3300,7 +3298,7 @@ convert_utf32_to_latin1_with_errors(
       utf32_input.data(), utf32_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-32 string into Latin1 string.
@@ -3324,7 +3322,7 @@ convert_utf32_to_latin1_with_errors(
  */
 simdutf_warn_unused size_t convert_valid_utf32_to_latin1(
     const char32_t *input, size_t length, char *latin1_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf32_to_latin1(
     std::span<const char32_t> valid_utf32_input,
     detail::output_span_of_byte_like auto &&latin1_output) noexcept {
@@ -3332,7 +3330,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_valid_utf32_to_latin1(
       valid_utf32_input.data(), valid_utf32_input.size(),
       reinterpret_cast<char *>(latin1_output.data()));
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Compute the number of bytes that this UTF-32 string would require in Latin1
@@ -3375,14 +3373,14 @@ simdutf_warn_unused size_t utf32_length_from_latin1(size_t length) noexcept;
  */
 simdutf_warn_unused size_t convert_utf32_to_utf16be(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_utf32_to_utf16be(std::span<const char32_t> utf32_input,
                          std::span<char16_t> utf16_output) noexcept {
   return convert_utf32_to_utf16be(utf32_input.data(), utf32_input.size(),
                                   utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness, convert possibly broken UTF-32 string into UTF-16
@@ -3403,14 +3401,14 @@ convert_utf32_to_utf16be(std::span<const char32_t> utf32_input,
  */
 simdutf_warn_unused result convert_utf32_to_utf16_with_errors(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf32_to_utf16_with_errors(std::span<const char32_t> utf32_input,
                                    std::span<char16_t> utf16_output) noexcept {
   return convert_utf32_to_utf16_with_errors(
       utf32_input.data(), utf32_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-32 string into UTF-16LE string and stop on error.
@@ -3430,7 +3428,7 @@ convert_utf32_to_utf16_with_errors(std::span<const char32_t> utf32_input,
  */
 simdutf_warn_unused result convert_utf32_to_utf16le_with_errors(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf32_to_utf16le_with_errors(
     std::span<const char32_t> utf32_input,
@@ -3438,7 +3436,7 @@ convert_utf32_to_utf16le_with_errors(
   return convert_utf32_to_utf16le_with_errors(
       utf32_input.data(), utf32_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert possibly broken UTF-32 string into UTF-16BE string and stop on error.
@@ -3458,7 +3456,7 @@ convert_utf32_to_utf16le_with_errors(
  */
 simdutf_warn_unused result convert_utf32_to_utf16be_with_errors(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result
 convert_utf32_to_utf16be_with_errors(
     std::span<const char32_t> utf32_input,
@@ -3466,7 +3464,7 @@ convert_utf32_to_utf16be_with_errors(
   return convert_utf32_to_utf16be_with_errors(
       utf32_input.data(), utf32_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness, convert valid UTF-32 string into a UTF-16 string.
@@ -3483,14 +3481,14 @@ convert_utf32_to_utf16be_with_errors(
  */
 simdutf_warn_unused size_t convert_valid_utf32_to_utf16(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf32_to_utf16(std::span<const char32_t> valid_utf32_input,
                              std::span<char16_t> utf16_output) noexcept {
   return convert_valid_utf32_to_utf16(
       valid_utf32_input.data(), valid_utf32_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-32 string into UTF-16LE string.
@@ -3507,14 +3505,14 @@ convert_valid_utf32_to_utf16(std::span<const char32_t> valid_utf32_input,
  */
 simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf32_to_utf16le(std::span<const char32_t> valid_utf32_input,
                                std::span<char16_t> utf16_output) noexcept {
   return convert_valid_utf32_to_utf16le(
       valid_utf32_input.data(), valid_utf32_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert valid UTF-32 string into UTF-16BE string.
@@ -3531,15 +3529,15 @@ convert_valid_utf32_to_utf16le(std::span<const char32_t> valid_utf32_input,
  */
 simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(
     const char32_t *input, size_t length, char16_t *utf16_buffer) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 convert_valid_utf32_to_utf16be(std::span<const char32_t> valid_utf32_input,
                                std::span<char16_t> utf16_output) noexcept {
   return convert_valid_utf32_to_utf16be(
       valid_utf32_input.data(), valid_utf32_input.size(), utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF16
 /**
@@ -3557,15 +3555,15 @@ convert_valid_utf32_to_utf16be(std::span<const char32_t> valid_utf32_input,
  */
 void change_endianness_utf16(const char16_t *input, size_t length,
                              char16_t *output) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline void
 change_endianness_utf16(std::span<const char16_t> utf16_input,
                         std::span<char16_t> utf16_output) noexcept {
   return change_endianness_utf16(utf16_input.data(), utf16_input.size(),
                                  utf16_output.data());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 /**
@@ -3581,14 +3579,14 @@ change_endianness_utf16(std::span<const char16_t> utf16_input,
  */
 simdutf_warn_unused size_t utf8_length_from_utf32(const char32_t *input,
                                                   size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 utf8_length_from_utf32(std::span<const char32_t> valid_utf32_input) noexcept {
   return utf8_length_from_utf32(valid_utf32_input.data(),
                                 valid_utf32_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 /**
@@ -3604,13 +3602,13 @@ utf8_length_from_utf32(std::span<const char32_t> valid_utf32_input) noexcept {
  */
 simdutf_warn_unused size_t utf16_length_from_utf32(const char32_t *input,
                                                    size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 utf16_length_from_utf32(std::span<const char32_t> valid_utf32_input) noexcept {
   return utf16_length_from_utf32(valid_utf32_input.data(),
                                  valid_utf32_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Using native endianness; Compute the number of bytes that this UTF-16
@@ -3629,13 +3627,13 @@ utf16_length_from_utf32(std::span<const char32_t> valid_utf32_input) noexcept {
  */
 simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t *input,
                                                    size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 utf32_length_from_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
   return utf32_length_from_utf16(valid_utf16_input.data(),
                                  valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Compute the number of bytes that this UTF-16LE string would require in UTF-32
@@ -3654,13 +3652,13 @@ utf32_length_from_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t *input,
                                                      size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t utf32_length_from_utf16le(
     std::span<const char16_t> valid_utf16_input) noexcept {
   return utf32_length_from_utf16le(valid_utf16_input.data(),
                                    valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Compute the number of bytes that this UTF-16BE string would require in UTF-32
@@ -3679,14 +3677,14 @@ simdutf_really_inline simdutf_warn_unused size_t utf32_length_from_utf16le(
  */
 simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t *input,
                                                      size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t utf32_length_from_utf16be(
     std::span<const char16_t> valid_utf16_input) noexcept {
   return utf32_length_from_utf16be(valid_utf16_input.data(),
                                    valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF16
 /**
@@ -3705,12 +3703,12 @@ simdutf_really_inline simdutf_warn_unused size_t utf32_length_from_utf16be(
  */
 simdutf_warn_unused size_t count_utf16(const char16_t *input,
                                        size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 count_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
   return count_utf16(valid_utf16_input.data(), valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Count the number of code points (characters) in the string assuming that
@@ -3728,12 +3726,12 @@ count_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t count_utf16le(const char16_t *input,
                                          size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 count_utf16le(std::span<const char16_t> valid_utf16_input) noexcept {
   return count_utf16le(valid_utf16_input.data(), valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Count the number of code points (characters) in the string assuming that
@@ -3751,13 +3749,13 @@ count_utf16le(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t count_utf16be(const char16_t *input,
                                          size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 count_utf16be(std::span<const char16_t> valid_utf16_input) noexcept {
   return count_utf16be(valid_utf16_input.data(), valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8
 /**
@@ -3774,13 +3772,13 @@ count_utf16be(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t count_utf8(const char *input,
                                       size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t count_utf8(
     const detail::input_span_of_byte_like auto &valid_utf8_input) noexcept {
   return count_utf8(reinterpret_cast<const char *>(valid_utf8_input.data()),
                     valid_utf8_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Given a valid UTF-8 string having a possibly truncated last character,
@@ -3797,15 +3795,15 @@ simdutf_really_inline simdutf_warn_unused size_t count_utf8(
  * @return the length of the string in bytes, possibly shorter by 1 to 3 bytes
  */
 simdutf_warn_unused size_t trim_partial_utf8(const char *input, size_t length);
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t trim_partial_utf8(
     const detail::input_span_of_byte_like auto &valid_utf8_input) noexcept {
   return trim_partial_utf8(
       reinterpret_cast<const char *>(valid_utf8_input.data()),
       valid_utf8_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF8
 
 #if SIMDUTF_FEATURE_UTF16
 /**
@@ -3824,13 +3822,13 @@ simdutf_really_inline simdutf_warn_unused size_t trim_partial_utf8(
  */
 simdutf_warn_unused size_t trim_partial_utf16be(const char16_t *input,
                                                 size_t length);
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 trim_partial_utf16be(std::span<const char16_t> valid_utf16_input) noexcept {
   return trim_partial_utf16be(valid_utf16_input.data(),
                               valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Given a valid UTF-16LE string having a possibly truncated last character,
@@ -3848,13 +3846,13 @@ trim_partial_utf16be(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t trim_partial_utf16le(const char16_t *input,
                                                 size_t length);
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 trim_partial_utf16le(std::span<const char16_t> valid_utf16_input) noexcept {
   return trim_partial_utf16le(valid_utf16_input.data(),
                               valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Given a valid UTF-16 string having a possibly truncated last character,
@@ -3872,18 +3870,18 @@ trim_partial_utf16le(std::span<const char16_t> valid_utf16_input) noexcept {
  */
 simdutf_warn_unused size_t trim_partial_utf16(const char16_t *input,
                                               size_t length);
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 trim_partial_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
   return trim_partial_utf16(valid_utf16_input.data(), valid_utf16_input.size());
 }
-  #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_BASE64
-  #ifndef SIMDUTF_NEED_TRAILING_ZEROES
-    #define SIMDUTF_NEED_TRAILING_ZEROES 1
-  #endif
+#ifndef SIMDUTF_NEED_TRAILING_ZEROES
+#define SIMDUTF_NEED_TRAILING_ZEROES 1
+#endif
 // base64_options are used to specify the base64 encoding options.
 // ASCII spaces are ' ', '\t', '\n', '\r', '\f'
 // garbage characters are characters that are not part of the base64 alphabet
@@ -3912,7 +3910,7 @@ enum base64_options : uint64_t {
              if any */
 };
 
-  #if SIMDUTF_CPLUSPLUS17
+#if SIMDUTF_CPLUSPLUS17
 inline std::string_view to_string(base64_options options) {
   switch (options) {
   case base64_default:
@@ -3934,7 +3932,7 @@ inline std::string_view to_string(base64_options options) {
   }
   return "<unknown>";
 }
-  #endif // SIMDUTF_CPLUSPLUS17
+#endif // SIMDUTF_CPLUSPLUS17
 
 // last_chunk_handling_options are used to specify the handling of the last
 // chunk in base64 decoding.
@@ -3953,7 +3951,7 @@ inline bool is_partial(last_chunk_handling_options options) {
   return (options == stop_before_partial) || (options == only_full_chunks);
 }
 
-  #if SIMDUTF_CPLUSPLUS17
+#if SIMDUTF_CPLUSPLUS17
 inline std::string_view to_string(last_chunk_handling_options options) {
   switch (options) {
   case loose:
@@ -3967,7 +3965,7 @@ inline std::string_view to_string(last_chunk_handling_options options) {
   }
   return "<unknown>";
 }
-  #endif
+#endif
 
 /**
  * Provide the maximal binary length in bytes given the base64 input.
@@ -3980,14 +3978,14 @@ inline std::string_view to_string(last_chunk_handling_options options) {
  */
 simdutf_warn_unused size_t
 maximal_binary_length_from_base64(const char *input, size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 maximal_binary_length_from_base64(
     const detail::input_span_of_byte_like auto &input) noexcept {
   return maximal_binary_length_from_base64(
       reinterpret_cast<const char *>(input.data()), input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Provide the maximal binary length in bytes given the base64 input.
@@ -4001,12 +3999,12 @@ maximal_binary_length_from_base64(
  */
 simdutf_warn_unused size_t maximal_binary_length_from_base64(
     const char16_t *input, size_t length) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 maximal_binary_length_from_base64(std::span<const char16_t> input) noexcept {
   return maximal_binary_length_from_base64(input.data(), input.size());
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Convert a base64 input to a binary output.
@@ -4066,7 +4064,7 @@ simdutf_warn_unused result base64_to_binary(
     const char *input, size_t length, char *output,
     base64_options options = base64_default,
     last_chunk_handling_options last_chunk_options = loose) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result base64_to_binary(
     const detail::input_span_of_byte_like auto &input,
     detail::output_span_of_byte_like auto &&binary_output,
@@ -4077,7 +4075,7 @@ simdutf_really_inline simdutf_warn_unused result base64_to_binary(
                           reinterpret_cast<char *>(binary_output.data()),
                           options, last_chunk_options);
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Provide the base64 length in bytes given the length of a binary input.
@@ -4111,7 +4109,7 @@ simdutf_warn_unused size_t base64_length_from_binary(
  */
 size_t binary_to_base64(const char *input, size_t length, char *output,
                         base64_options options = base64_default) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 binary_to_base64(const detail::input_span_of_byte_like auto &input,
                  detail::output_span_of_byte_like auto &&binary_output,
@@ -4120,9 +4118,9 @@ binary_to_base64(const detail::input_span_of_byte_like auto &input,
       reinterpret_cast<const char *>(input.data()), input.size(),
       reinterpret_cast<char *>(binary_output.data()), options);
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
-  #if SIMDUTF_ATOMIC_REF
+#if SIMDUTF_ATOMIC_REF
 /**
  * Convert a binary input to a base64 output, using atomic accesses.
  * This function comes with a potentially significant performance
@@ -4167,7 +4165,7 @@ binary_to_base64(const detail::input_span_of_byte_like auto &input,
 size_t
 atomic_binary_to_base64(const char *input, size_t length, char *output,
                         base64_options options = base64_default) noexcept;
-    #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused size_t
 atomic_binary_to_base64(const detail::input_span_of_byte_like auto &input,
                         detail::output_span_of_byte_like auto &&binary_output,
@@ -4176,8 +4174,8 @@ atomic_binary_to_base64(const detail::input_span_of_byte_like auto &input,
       reinterpret_cast<const char *>(input.data()), input.size(),
       reinterpret_cast<char *>(binary_output.data()), options);
 }
-    #endif // SIMDUTF_SPAN
-  #endif   // SIMDUTF_ATOMIC_REF
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_ATOMIC_REF
 
 /**
  * Convert a base64 input to a binary output.
@@ -4240,7 +4238,7 @@ base64_to_binary(const char16_t *input, size_t length, char *output,
                  base64_options options = base64_default,
                  last_chunk_handling_options last_chunk_options =
                      last_chunk_handling_options::loose) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused result base64_to_binary(
     std::span<const char16_t> input,
     detail::output_span_of_byte_like auto &&binary_output,
@@ -4250,7 +4248,7 @@ simdutf_really_inline simdutf_warn_unused result base64_to_binary(
                           reinterpret_cast<char *>(binary_output.data()),
                           options, last_chunk_options);
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 /**
  * Check if a character is an ignorabl base64 character.
@@ -4373,7 +4371,7 @@ base64_to_binary_safe(const char *input, size_t length, char *output,
                       last_chunk_handling_options last_chunk_options =
                           last_chunk_handling_options::loose,
                       bool decode_up_to_bad_char = false) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 /**
  * @brief span overload
  * @return a tuple of result and outlen
@@ -4391,7 +4389,7 @@ base64_to_binary_safe(const detail::input_span_of_byte_like auto &input,
       last_chunk_options, decode_up_to_bad_char);
   return {r, outlen};
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
 simdutf_warn_unused result
 base64_to_binary_safe(const char16_t *input, size_t length, char *output,
@@ -4399,7 +4397,7 @@ base64_to_binary_safe(const char16_t *input, size_t length, char *output,
                       last_chunk_handling_options last_chunk_options =
                           last_chunk_handling_options::loose,
                       bool decode_up_to_bad_char = false) noexcept;
-  #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 /**
  * @brief span overload
  * @return a tuple of result and outlen
@@ -4417,9 +4415,9 @@ base64_to_binary_safe(std::span<const char16_t> input,
                                  decode_up_to_bad_char);
   return {r, outlen};
 }
-  #endif // SIMDUTF_SPAN
+#endif // SIMDUTF_SPAN
 
-  #if SIMDUTF_ATOMIC_REF
+#if SIMDUTF_ATOMIC_REF
 /**
  * Convert a base64 input to a binary output with a size limit and using atomic
  * operations.
@@ -4470,7 +4468,7 @@ simdutf_warn_unused result atomic_base64_to_binary_safe(
     base64_options options = base64_default,
     last_chunk_handling_options last_chunk_options = loose,
     bool decode_up_to_bad_char = false) noexcept;
-    #if SIMDUTF_SPAN
+#if SIMDUTF_SPAN
 /**
  * @brief span overload
  * @return a tuple of result and outlen
@@ -4508,8 +4506,8 @@ atomic_base64_to_binary_safe(
       last_chunk_options, decode_up_to_bad_char);
   return {ret, outlen};
 }
-    #endif // SIMDUTF_SPAN
-  #endif   // SIMDUTF_ATOMIC_REF
+#endif // SIMDUTF_SPAN
+#endif // SIMDUTF_ATOMIC_REF
 
 /**
  * Find the first occurrence of a character in a string. If the character is

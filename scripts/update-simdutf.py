@@ -129,7 +129,7 @@ def latest_simdutf_version() -> str:
 
 def git(*args) -> str:
     return subprocess.check_output(
-        ["git"] + list(*args),
+        ["git"] + list(args),
         cwd=PROJECT_ROOT,
         stderr=subprocess.STDOUT,
         encoding="utf-8",
@@ -164,12 +164,8 @@ def branch_name(version: str) -> str:
     return f"deps/{version}"
 
 
-def create_pr(old_version: str, new_version: str, auth_token: str) -> None:
+def create_pr(old_version: str, new_version: str) -> str:
     branch = branch_name(new_version)
-    if pr_exists(branch):
-        log.warn("PR already exists for version %s: nothing to do", new_version)
-        return
-
     if not modified_files():
         raise RuntimeError("no files were modified")
 
@@ -184,14 +180,20 @@ def create_pr(old_version: str, new_version: str, auth_token: str) -> None:
         "-m",
         "Update the bundled simdutf library from version {old_version} to {new_version}.",
     )
+    return branch
 
-    def rel_url(version: str) -> str:
-        return f"[{version}](https://github.com/simdutf/simdutf/releases/tag/{version})"
 
+def push_pr(branch: str, old_version: str, new_version: str, auth_token: str) -> None:
+    if pr_exists(branch):
+        log.warn("PR already exists for version %s: nothing to do", new_version)
+        return
+
+    title = f"deps: update bundled library version from {old_version} to {new_version}"
+    old_url = f"[{old_version}](https://github.com/simdutf/simdutf/releases/tag/{old_version})"
+    new_url = f"[{new_version}](https://github.com/simdutf/simdutf/releases/tag/{new_version})"
     body = {
         "title": title,
-        "body": "This commit updates the bundled simdutf library from version "
-        + f"{rel_url(old_version)} to {rel_url(new_version)}.",
+        "body": f"This commit updates the bundled simdutf library from version {old_url} to {new_url}",
         "head": branch,
         "base": "master",
     }
@@ -229,19 +231,26 @@ def main() -> int:
             "refusing to update to draft/pre-release version: %s",
             rel["tag_name"],
         )
-        return 1
 
     update_release(latest_version)
     run_go_tests()
-    if not os.environ["SIMDUTF_GH_ACTIONS"]:
+
+    branch_name = create_pr(
+        old_version=current_version,
+        new_version=latest_version,
+    )
+    if not branch_name:
+        return 0  # Nothing to do
+
+    if not os.environ.get("SIMDUTF_GH_ACTIONS"):
         log.fatal("missing SIMDUTF_GH_ACTIONS token - cannot create PR")
         return 1
-    create_pr(
+    push_pr(
+        branch=branch_name,
         old_version=current_version,
         new_version=latest_version,
         auth_token=os.environ["SIMDUTF_GH_ACTIONS"],
     )
-
     return 0
 
 

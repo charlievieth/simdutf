@@ -128,12 +128,21 @@ def latest_simdutf_version() -> str:
 
 
 def git(*args) -> str:
-    return subprocess.check_output(
-        ["git"] + list(args),
-        cwd=PROJECT_ROOT,
-        stderr=subprocess.STDOUT,
-        encoding="utf-8",
-    )
+    try:
+        return subprocess.check_output(
+            ["git"] + list(args),
+            cwd=PROJECT_ROOT,
+            stderr=subprocess.STDOUT,
+            encoding="utf-8",
+        )
+    except subprocess.CalledProcessError as e:
+        log.error(
+            "Command '%s' exited with code: %d: %s",
+            e.cmd,
+            e.returncode,
+            e.output.strip() if e.output else "<NONE>",
+        )
+        raise e
 
 
 def pr_exists(branch_name: str) -> bool:
@@ -165,10 +174,10 @@ def branch_name(version: str) -> str:
 
 
 def create_pr(old_version: str, new_version: str) -> str:
-    branch = branch_name(new_version)
     if not modified_files():
         raise RuntimeError("no files were modified")
 
+    branch = branch_name(new_version)
     git("checkout", "-b", branch)
     git("add", "--update", "simdutf.h", "simdutf.cpp", "SIMDUTF_VERSION", "README.md")
 

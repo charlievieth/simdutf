@@ -15,9 +15,19 @@ package simdutf
 import "C"
 
 import (
+	"sync"
 	"unicode/utf8"
 	"unsafe"
 )
+
+var versionOnce = sync.OnceValue(func() string {
+	return C.GoString(C.simdutf_version())
+})
+
+// Version returns the version of the linked simdutf library.
+func Version() string {
+	return versionOnce()
+}
 
 // IsASCII reports whether p consists entirely of valid ASCII-encoded runes.
 func IsASCII(p []byte) bool {

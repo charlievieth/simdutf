@@ -103,7 +103,6 @@ def update_release(version: str) -> None:
     modify_file(
         os.path.join(PROJECT_ROOT, "README.md"),
         update_readme,
-        # lambda src: src.replace(current_simdutf_version(), version),
     )
     modify_file(
         os.path.join(PROJECT_ROOT, "SIMDUTF_VERSION"),
@@ -180,14 +179,12 @@ def create_pr(old_version: str, new_version: str) -> str:
     branch = branch_name(new_version)
     git("checkout", "-b", branch)
     git("add", "--update", "simdutf.h", "simdutf.cpp", "SIMDUTF_VERSION", "README.md")
-
-    title = f"deps: update bundled library version from {old_version} to {new_version}"
     git(
         "commit",
         "-m",
-        title,
+        f"deps: update bundled library version from {old_version} to {new_version}",
         "-m",
-        "Update the bundled simdutf library from version {old_version} to {new_version}.",
+        f"Update the bundled simdutf library from version {old_version} to {new_version}.",
     )
     return branch
 
@@ -251,6 +248,7 @@ def main() -> int:
     if not branch_name:
         return 0  # Nothing to do
 
+    # TODO: add local version that uses `gh`
     if not os.environ.get("SIMDUTF_GH_ACTIONS"):
         log.fatal("missing SIMDUTF_GH_ACTIONS token - cannot create PR")
         return 1

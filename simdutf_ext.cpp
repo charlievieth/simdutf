@@ -8,3 +8,5 @@ bool validate_ascii(const char *buf, size_t len) {
 bool validate_utf8(const char *buf, size_t len) {
   return simdutf::validate_utf8(buf, len);
 }
+
+const char *simdutf_version(void) { return SIMDUTF_VERSION; }

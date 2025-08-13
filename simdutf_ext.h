@@ -31,6 +31,13 @@ bool validate_ascii(const char *buf, size_t len);
  */
 bool validate_utf8(const char *buf, size_t len);
 
+/**
+ * Return the version of the linked simdutf library.
+ *
+ * @return the version of the simdutf library.
+ */
+const char *simdutf_version(void);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

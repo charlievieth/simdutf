@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"regexp"
 	"slices"
 	"sort"
 	"strings"
@@ -46,6 +47,22 @@ func init() {
 			in:  prefix + t.in,
 			out: t.out,
 		})
+	}
+}
+
+func TestVersion(t *testing.T) {
+	ver := Version()
+	match, err := regexp.MatchString(`^\d+\.\d+\.\d+$`, ver)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !match {
+		t.Errorf("invalid version: %q", ver)
+	}
+
+	allocs := testing.AllocsPerRun(100, func() { Version() })
+	if allocs != 0 {
+		t.Fatalf("expected 0 allocs per-run got: %.2f", allocs)
 	}
 }
 

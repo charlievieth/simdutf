@@ -1,6 +1,6 @@
 //go:build !libsimdutf
 
-/* auto-generated on 2025-08-08 23:23:17 -0400. Do not edit! */
+/* auto-generated on 2025-08-14 14:24:45 -0400. Do not edit! */
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
 
@@ -13296,8 +13296,8 @@ change_endianness_utf16(const char16_t *input, size_t size, char16_t *output) {
 template <endianness big_endian>
 simdutf_warn_unused inline size_t trim_partial_utf16(const char16_t *input,
                                                      size_t length) {
-  if (length <= 1) {
-    return length;
+  if (length == 0) {
+    return 0;
   }
   uint16_t last_word = uint16_t(input[length - 1]);
   last_word = !match_system(big_endian) ? u16_swap_bytes(last_word) : last_word;
@@ -21844,29 +21844,29 @@ simdutf_really_inline const char *util_find(const char *start, const char *end,
     if (mask != 0) {
       // Found a match, return the first one
       uint64_t mask1 = vget_lane_u64(
-        vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp1), 4)), 0);
-      if(mask1 != 0) {
+          vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp1), 4)), 0);
+      if (mask1 != 0) {
         // Found a match in the first chunk
         int index = trailing_zeroes(mask1) / 4; // Each character maps to 4 bits
         return start + index;
       }
       uint64_t mask2 = vget_lane_u64(
-        vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp2), 4)), 0);
-      if(mask2 != 0) {
+          vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp2), 4)), 0);
+      if (mask2 != 0) {
         // Found a match in the second chunk
         int index = trailing_zeroes(mask2) / 4; // Each character maps to 4 bits
         return start + index + 16;
       }
       uint64_t mask3 = vget_lane_u64(
-        vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp3), 4)), 0);
-      if(mask3 != 0) {
+          vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp3), 4)), 0);
+      if (mask3 != 0) {
         // Found a match in the third chunk
         int index = trailing_zeroes(mask3) / 4; // Each character maps to 4 bits
         return start + index + 32;
       }
       uint64_t mask4 = vget_lane_u64(
-        vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp4), 4)), 0);
-      if(mask4 != 0) {
+          vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(cmp4), 4)), 0);
+      if (mask4 != 0) {
         // Found a match in the fourth chunk
         int index = trailing_zeroes(mask4) / 4; // Each character maps to 4 bits
         return start + index + 48;
@@ -21913,9 +21913,11 @@ simdutf_really_inline const char16_t *util_find(const char16_t *start,
   uint16x8_t char_vec = vdupq_n_u16(character);
 
   // Handle unaligned beginning
-  uintptr_t misalignment = reinterpret_cast<uintptr_t>(start) % (step * sizeof(char16_t));
+  uintptr_t misalignment =
+      reinterpret_cast<uintptr_t>(start) % (step * sizeof(char16_t));
   if (misalignment != 0 && misalignment % 2 == 0) {
-    size_t adjustment = (step * sizeof(char16_t) - misalignment) / sizeof(char16_t);
+    size_t adjustment =
+        (step * sizeof(char16_t) - misalignment) / sizeof(char16_t);
     if (size_t(end - start) < adjustment) {
       adjustment = end - start;
     }
@@ -21930,9 +21932,12 @@ simdutf_really_inline const char16_t *util_find(const char16_t *start,
   // Main loop for full 8-element chunks with unrolling
   while (size_t(end - start) >= 4 * step) {
     uint16x8_t data1 = vld1q_u16(reinterpret_cast<const uint16_t *>(start));
-    uint16x8_t data2 = vld1q_u16(reinterpret_cast<const uint16_t *>(start) + step);
-    uint16x8_t data3 = vld1q_u16(reinterpret_cast<const uint16_t *>(start) + 2 * step);
-    uint16x8_t data4 = vld1q_u16(reinterpret_cast<const uint16_t *>(start) + 3 * step);
+    uint16x8_t data2 =
+        vld1q_u16(reinterpret_cast<const uint16_t *>(start) + step);
+    uint16x8_t data3 =
+        vld1q_u16(reinterpret_cast<const uint16_t *>(start) + 2 * step);
+    uint16x8_t data4 =
+        vld1q_u16(reinterpret_cast<const uint16_t *>(start) + 3 * step);
 
     uint16x8_t cmp1 = vceqq_u16(data1, char_vec);
     uint16x8_t cmp2 = vceqq_u16(data2, char_vec);
@@ -30548,7 +30553,8 @@ simdutf_really_inline const char *util_find(const char *start, const char *end,
       adjustment = end - start;
     }
     __mmask64 load_mask = 0xFFFFFFFFFFFFFFFF >> (64 - adjustment);
-    __m512i data = _mm512_maskz_loadu_epi8(load_mask, reinterpret_cast<const __m512i *>(start));
+    __m512i data = _mm512_maskz_loadu_epi8(
+        load_mask, reinterpret_cast<const __m512i *>(start));
     __mmask64 match_mask = _mm512_cmpeq_epi8_mask(data, char_vec);
 
     if (match_mask != 0) {
@@ -30559,11 +30565,13 @@ simdutf_really_inline const char *util_find(const char *start, const char *end,
   }
   // Process 64 bytes (512 bits) at a time with AVX-512
   // Main loop for full 128-byte chunks
-  while (size_t(end - start) >= 2*step) {
-    __m512i data1 = _mm512_loadu_si512(reinterpret_cast<const __m512i *>(start));
+  while (size_t(end - start) >= 2 * step) {
+    __m512i data1 =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(start));
     __mmask64 mask1 = _mm512_cmpeq_epi8_mask(data1, char_vec);
 
-    __m512i data2 = _mm512_loadu_si512(reinterpret_cast<const __m512i *>(start + step));
+    __m512i data2 =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(start + step));
     __mmask64 mask2 = _mm512_cmpeq_epi8_mask(data2, char_vec);
     if (!_kortestz_mask64_u8(mask1, mask2)) {
       if (mask1 != 0) {
@@ -30625,14 +30633,17 @@ simdutf_really_inline const char16_t *util_find(const char16_t *start,
   __m512i char_vec = _mm512_set1_epi16(character);
 
   // Handle unaligned beginning with a masked load
-  uintptr_t misalignment = reinterpret_cast<uintptr_t>(start) % (step * sizeof(char16_t));
+  uintptr_t misalignment =
+      reinterpret_cast<uintptr_t>(start) % (step * sizeof(char16_t));
   if (misalignment != 0 && misalignment % 2 == 0) {
-    size_t adjustment = (step * sizeof(char16_t) - misalignment) / sizeof(char16_t);
+    size_t adjustment =
+        (step * sizeof(char16_t) - misalignment) / sizeof(char16_t);
     if (size_t(end - start) < adjustment) {
       adjustment = end - start;
     }
     __mmask32 load_mask = 0xFFFFFFFF >> (32 - adjustment);
-    __m512i data = _mm512_maskz_loadu_epi16(load_mask, reinterpret_cast<const __m512i *>(start));
+    __m512i data = _mm512_maskz_loadu_epi16(
+        load_mask, reinterpret_cast<const __m512i *>(start));
     __mmask32 match_mask = _mm512_cmpeq_epi16_mask(data, char_vec);
 
     if (match_mask != 0) {
@@ -30660,7 +30671,8 @@ simdutf_really_inline const char16_t *util_find(const char16_t *start,
   size_t remaining = end - start;
   if (remaining > 0) {
     __mmask32 load_mask = 0xFFFFFFFF >> (32 - remaining);
-    __m512i data = _mm512_maskz_loadu_epi16(load_mask, reinterpret_cast<const __m512i *>(start));
+    __m512i data = _mm512_maskz_loadu_epi16(
+        load_mask, reinterpret_cast<const __m512i *>(start));
     __mmask32 match_mask = _mm512_cmpeq_epi16_mask(data, char_vec);
 
     if (match_mask != 0) {

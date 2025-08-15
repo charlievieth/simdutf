@@ -3,7 +3,8 @@ name: Update simdutf library
 
 on:
   schedule:
-    - cron: '10 */2 * * *'
+    # At 12:10 on every day-of-month.
+    - cron: '10 12 */1 * *'
 
 jobs:
   test:

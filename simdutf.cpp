@@ -1,6 +1,6 @@
 //go:build !libsimdutf
 
-/* auto-generated on 2025-08-14 14:24:45 -0400. Do not edit! */
+/* auto-generated on 2025-08-20 10:28:56 -0400. Do not edit! */
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
 

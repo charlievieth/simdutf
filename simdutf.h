@@ -1,6 +1,6 @@
 //go:build !libsimdutf
 
-/* auto-generated on 2025-08-14 14:24:45 -0400. Do not edit! */
+/* auto-generated on 2025-08-20 10:28:56 -0400. Do not edit! */
 /* begin file include/simdutf.h */
 #ifndef SIMDUTF_H
 #define SIMDUTF_H
@@ -745,7 +745,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "7.3.6"
+#define SIMDUTF_VERSION "7.4.0"
 
 namespace simdutf {
 enum {
@@ -756,11 +756,11 @@ enum {
   /**
    * The minor version (major.MINOR.revision) of simdutf being used.
    */
-  SIMDUTF_VERSION_MINOR = 3,
+  SIMDUTF_VERSION_MINOR = 4,
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 6
+  SIMDUTF_VERSION_REVISION = 0
 };
 } // namespace simdutf
 

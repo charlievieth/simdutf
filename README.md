@@ -16,7 +16,7 @@ simdutf library build this library with the `libsimdutf` build tag.
 ## simdutf version
 
 This library bundles [simdutf](https://github.com/simdutf/simdutf/) version
-[v7.4.0](https://github.com/simdutf/simdutf/releases/tag/v7.4.0).
+[v7.5.0](https://github.com/simdutf/simdutf/releases/tag/v7.5.0).
 The [SIMDUTF_VERSION](./SIMDUTF_VERSION) file contains the current version of
 the bundled simdutf version.
 

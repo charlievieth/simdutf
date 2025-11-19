@@ -1,6 +1,6 @@
 //go:build !libsimdutf
 
-/* auto-generated on 2025-10-16 15:23:57 -0400. Do not edit! */
+/* auto-generated on 2025-11-18 10:30:51 -0500. Do not edit! */
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
 
@@ -901,14 +901,6 @@ static_assert(to_base64_url_value[uint8_t('_')] == 63,
 /* begin file src/encoding_types.cpp */
 
 namespace simdutf {
-bool match_system(endianness e) {
-#if SIMDUTF_IS_BIG_ENDIAN
-  return e == endianness::BIG;
-#else
-  return e == endianness::LITTLE;
-#endif
-}
-
 std::string to_string(encoding_type bom) {
   switch (bom) {
   case UTF16_LE:
@@ -2903,6 +2895,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
   simdutf_warn_unused size_t
@@ -4591,6 +4589,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -4692,6 +4696,17 @@ simdutf_really_inline unsigned __int64 count_ones(uint64_t input_num) {
 #else
 simdutf_really_inline long long int count_ones(uint64_t input_num) {
   return _popcnt64(input_num);
+}
+#endif
+
+#ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+simdutf_really_inline unsigned __int64 count_ones32(uint32_t input_num) {
+  // note: we do not support legacy 32-bit Windows
+  return __popcnt(input_num); // Visual Studio wants two underscores
+}
+#else
+simdutf_really_inline long long int count_ones32(uint32_t input_num) {
+  return _popcnt32(input_num);
 }
 #endif
 
@@ -5191,6 +5206,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -6474,6 +6495,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -7725,6 +7752,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -9511,6 +9544,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
   simdutf_warn_unused size_t
@@ -9995,6 +10034,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
   simdutf_warn_unused size_t
@@ -11325,6 +11370,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
   simdutf_warn_unused size_t
@@ -12895,6 +12946,12 @@ public:
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t
   utf16_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept;
+  ;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -13540,6 +13597,34 @@ simdutf_really_inline bool high_surrogate(char16_t c) {
 
 simdutf_really_inline bool low_surrogate(char16_t c) {
   return (0xdc00 <= c && c <= 0xdfff);
+}
+
+template <endianness big_endian>
+inline size_t utf8_length_from_utf16_with_replacement(const char16_t *p,
+                                                      size_t len) {
+  // We are not BOM aware.
+  size_t counter{0};
+  for (size_t i = 0; i < len; i++) {
+    if (is_high_surrogate<big_endian>(p[i])) {
+      // surrogate pair
+      if (i + 1 < len && is_low_surrogate<big_endian>(p[i + 1])) {
+        counter += 4;
+        i++; // skip low surrogate
+      } else {
+        counter += 3; // unpaired high surrogate replaced by U+FFFD
+      }
+      continue;
+    } else if (is_low_surrogate<big_endian>(p[i])) {
+      counter += 3; // unpaired low surrogate replaced by U+FFFD
+      continue;
+    }
+    char16_t word = !match_system(big_endian) ? u16_swap_bytes(p[i]) : p[i];
+    counter++; // at least 1 byte
+    counter +=
+        static_cast<size_t>(word > 0x7F); // non-ASCII is at least 2 bytes
+    counter += static_cast<size_t>(word > 0x7FF); // three-byte
+  }
+  return counter;
 }
 
 // variable templates are a C++14 extension
@@ -17362,6 +17447,16 @@ public:
       char16_t *utf16_output) const noexcept final override {
     return set_best()->convert_valid_utf8_to_utf16be(buf, len, utf16_output);
   }
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept final override {
+    return set_best()->utf8_length_from_utf16le_with_replacement(input, length);
+  }
+
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept final override {
+    return set_best()->utf8_length_from_utf16be_with_replacement(input, length);
+  }
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -17959,6 +18054,16 @@ public:
       const char *, size_t, char16_t *) const noexcept final override {
     return 0;
   }
+  simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+      const char16_t *, size_t) const noexcept final override {
+    return 0; // Not supported
+  }
+
+  simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+      const char16_t *, size_t) const noexcept final override {
+    return 0; // Not supported
+  }
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -19113,6 +19218,14 @@ simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t *input,
   return utf8_length_from_utf16le(input, length);
   #endif
 }
+simdutf_warn_unused size_t utf8_length_from_utf16_with_replacement(
+    const char16_t *input, size_t length) noexcept {
+  #if SIMDUTF_IS_BIG_ENDIAN
+  return utf8_length_from_utf16be(input, length);
+  #else
+  return utf8_length_from_utf16le_with_replacement(input, length);
+  #endif
+}
 simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t *input,
                                                     size_t length) noexcept {
   return get_default_implementation()->utf8_length_from_utf16le(input, length);
@@ -19147,6 +19260,18 @@ simdutf_warn_unused size_t utf16_length_from_utf8(const char *input,
                                                   size_t length) noexcept {
   return get_default_implementation()->utf16_length_from_utf8(input, length);
 }
+simdutf_warn_unused size_t utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) noexcept {
+  return get_default_implementation()
+      ->utf8_length_from_utf16le_with_replacement(input, length);
+}
+
+simdutf_warn_unused size_t utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) noexcept {
+  return get_default_implementation()
+      ->utf8_length_from_utf16be_with_replacement(input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -21616,59 +21741,193 @@ arm_convert_utf16_to_utf8_with_errors(const char16_t *buf, size_t len,
 template <endianness big_endian>
 simdutf_really_inline size_t
 arm64_utf8_length_from_utf16_bytemask(const char16_t *in, size_t size) {
+  constexpr size_t N =
+      16; // we process 16 char16_t at a time, this is NEON specific
+
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16<big_endian>(in, size);
+  } // special case for short inputs
+  size_t count = 0;
+  const auto one = vmovq_n_u8(1);
+
+  // The general strategy is as follows:
+  // 1. each code unit yields at least one byte, we can account for that by
+  // adding the size of the input to the count.
+  // 2. ASCII bytes then count for zero.
+  // 3. Values that yield 2 or 3 bytes in UTF-8 add 1 or 2 to the count.
+  // 4. Surrogate pairs are handled by adding 1 for each surrogate code unit
+  //    for a total of 4 bytes for the pair.
   size_t pos = 0;
-
-  constexpr size_t N = 8;
-  const auto one = vmovq_n_u16(1);
-  // each char16 yields at least one byte
-  size_t count = size / N * N;
-
-  for (; pos < size / N * N; pos += N) {
-    auto input = vld1q_u16(reinterpret_cast<const uint16_t *>(in + pos));
+  // We will go through the input at least once.
+  for (; size - pos >= N; pos += N) {
+    auto base_input = vld2q_u8(reinterpret_cast<const uint8_t *>(in + pos));
+    //
+    size_t idx = 1; // we use the second lane of the deinterleaved load
     if (!match_system(big_endian)) {
-      input = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(input)));
+      idx = 0;
     }
-    // 0xd800 .. 0xdbff - low surrogate
-    // 0xdc00 .. 0xdfff - high surrogate
-    const auto is_surrogate =
-        vceqq_u16(vandq_u16(input, vmovq_n_u16(0xf800)), vmovq_n_u16(0xd800));
+    size_t idx_lsb = idx ^ 1;
+    auto c0 =
+        vminq_u8(vorrq_u8(vandq_u8(base_input.val[idx_lsb], vdupq_n_u8(0x80)),
+                          base_input.val[idx]),
+                 one);
+    auto c1 = vminq_u8(vandq_u8(base_input.val[idx], vdupq_n_u8(0xf8)), one);
+    auto is_surrogate = vcleq_u8(
+        vsubq_u8(base_input.val[idx], vdupq_n_u8(0xd8)), vdupq_n_u8(7));
 
-    // c0 - chars that yield 2- or 3-byte UTF-8 codes
-    const auto c0 = vminq_u16(vandq_u16(input, vmovq_n_u16(0xff80)), one);
+    auto v_count = vaddq_u8(c1, c0);
+    v_count = vaddq_u8(v_count, is_surrogate);
+    count += vaddlvq_u8(v_count); // sum the counts in the vector
+    /////////
+    // The vaddlvq_u8 instruction could be slow on some hardware. We could
+    // consider various alternatives if that is an issue such as accumulating
+    // into a vector of uint16_t or uint8_t and summing only at the end or
+    // periodically. However, on fast chipsets, like Apple Silicon, it is
+    // likely fast enough, or even faster than alternatives.
+    /////////
+  }
+  count += pos;
+  // If we end with a high surrogate, it might be unpaired or not, we
+  // don't know. It counts as a pair suggarate for now.
 
-    // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
-    const auto c1 = vminq_u16(vandq_u16(input, vmovq_n_u16(0xf800)), one);
-
-    /*
-        Explanation how the counting works.
-
-        In the case of a non-surrogate character we count:
-        * always 1 -- see how `count` is initialized above;
-        * c0 = 1 if the current char yields 2 or 3 bytes;
-        * c1 = 1 if the current char yields 3 bytes.
-
-        Thus, we always have correct count for the current char:
-        from 1, 2 or 3 bytes.
-
-        A trickier part is how we count surrogate pairs. Whether
-        we encounter a surrogate (low or high), we count it as
-        3 chars and then minus 1 (`is_surrogate` is -1 or 0).
-        Each surrogate char yields 2. A surrogate pair, that
-        is a low surrogate followed by a high one, yields
-        the expected 4 bytes.
-
-        It also correctly handles cases when low surrogate is
-        processed by the this loop, but high surrogate is counted
-        by the scalar procedure. The scalar procedure uses exactly
-        the described approach, thanks to that for valid UTF-16
-        strings it always count correctly.
-    */
-    auto v_count = vaddq_u16(c1, c0);
-    v_count = vaddq_u16(v_count, is_surrogate);
-    count += vaddlvq_u16(v_count);
+  if (scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+    if (pos == size) {
+      count += 2;
+    } else if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+      pos += 1;
+      count += 2;
+    }
   }
   return count + scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos,
                                                                    size - pos);
+}
+
+template <endianness big_endian>
+simdutf_really_inline size_t
+arm64_utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
+  constexpr size_t N =
+      16; // we process 16 char16_t at a time, this is NEON specific
+
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+        in, size);
+  } // special case for short input
+  size_t count = 0;
+  const auto one = vmovq_n_u8(1);
+
+  // The general strategy is as follows:
+  // 1. each code unit yields at least one byte, we can account for that by
+  // adding the size of the input to the count.
+  // 2. ASCII bytes then count for zero.
+  // 3. Values that yield 2 or 3 bytes in UTF-8 add 1 or 2 to the count.
+  // 4. Surrogate pairs are handled by adding 1 for each surrogate code unit
+  //    for a total of 4 bytes for the pair.
+  // 5. Unpaired surrogate elements have value 0xfffd in UTF-8, which is 3
+  // bytes,
+  //    so we need to add 2 more bytes for each unpaired surrogate. In effect,
+  //    an unpaired surrogate should count for 1 (+1 for the )
+  //
+  // Our strategy is to proceed like the arm64_utf8_length_from_utf16_bytemask
+  // function, but, at the same time, to record the number of unpaired
+  // surrogates. and then adjust the count accordingly.
+
+  // If we start with a low surrogate, it is unpaired and the SIMD code won't
+  // detect it, so we handle that here.
+  size_t number_of_unpaired_surrogates = 0;
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[0])) {
+    number_of_unpaired_surrogates += 1;
+  }
+  size_t pos = 0;
+  // We will go through the input at least once.
+  for (; size - pos >= N + 1; pos += N) {
+    auto base_input = vld2q_u8(reinterpret_cast<const uint8_t *>(in + pos));
+    size_t idx = 1; // we use the second lane of the deinterleaved load
+    if (!match_system(big_endian)) {
+      idx = 0;
+    }
+    size_t idx_lsb = idx ^ 1;
+    auto is_surrogate = vcleq_u8(
+        vsubq_u8(base_input.val[idx], vdupq_n_u8(0xd8)), vdupq_n_u8(7));
+    // We count on the fact that most inputs do not have surrogates.
+    if (vmaxvq_u32(vreinterpretq_u32_u8(is_surrogate)) ||
+        scalar::utf16::is_low_surrogate<big_endian>(in[pos + N])) {
+      // there is at least one surrogate in the block
+      // We use this to check that surrogates are paired correctly.
+      // It is the input shifted by one code unit (two bytes).
+      // We use it to detect *low* surrogates.
+      auto one_unit_offset_input =
+          vld2q_u8(reinterpret_cast<const uint8_t *>(in + pos + 1));
+      //
+
+      auto lb_masked = vandq_u8(base_input.val[idx], vdupq_n_u8(0xfc));
+      auto block_masked =
+          vandq_u8(one_unit_offset_input.val[idx], vdupq_n_u8(0xfc));
+      auto lb_is_high = vceqq_u8(lb_masked, vdupq_n_u8(0xd8));
+      auto block_is_low = vceqq_u8(block_masked, vdupq_n_u8(0xdc));
+
+      // illseq will mark every low surrogate in the offset block.
+      // that is not preceded by a high surrogate
+      //
+      // It will also mark every high surrogate in the main block
+      // that is not followed by a low surrogate
+      //
+      // This means that it will miss undetectable errors, like a high surrogate
+      // at the last index of the main block. And similarly a low surrogate
+      // at the index prior to the main block that was not preceded by a high
+      // surrogate.
+      //
+      // The interpretation of the values is that they start with the end value
+      // of the prior block, and end just before the end of the main block
+      // (minus one).
+      auto illseq = veorq_u8(lb_is_high, block_is_low);
+      number_of_unpaired_surrogates += vaddlvq_u8(vandq_u8(illseq, one));
+    }
+    auto c0 =
+        vminq_u8(vorrq_u8(vandq_u8(base_input.val[idx_lsb], vdupq_n_u8(0x80)),
+                          base_input.val[idx]),
+                 one);
+    auto c1 = vminq_u8(vandq_u8(base_input.val[idx], vdupq_n_u8(0xf8)), one);
+
+    auto v_count = vaddq_u8(c1, c0);
+    v_count = vaddq_u8(v_count, is_surrogate);
+    count += vaddlvq_u8(v_count); // sum the counts in the vector
+    /////////
+    // The vaddlvq_u8 instruction could be slow on some hardware. We could
+    // consider various alternatives if that is an issue such as accumulating
+    // into a vector of uint16_t or uint8_t and summing only at the end or
+    // periodically. However, on fast chipsets, like Apple Silicon, it is
+    // likely fast enough, or even faster than alternatives.
+    /////////
+  }
+
+  //!!!!!!!!!!!!!!!
+  // Here, we have processed up to pos - 1 (inclusive) code units. Except for
+  // the case where the value at pos is a low surrogate not preceded by a high
+  // surrogate. In this special case, we have already added one to the count for
+  // the unpaired low surrogate.
+  //!!!!!!!!!!!!!!!
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    if (!scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+      number_of_unpaired_surrogates -= 1;
+      count += 2;
+      pos += 1;
+    }
+  }
+  count += pos;
+  count += number_of_unpaired_surrogates;
+  // If we end with a high surrogate, it might be unpaired or not, we
+  // don't know. It counts as a pair suggarate for now.
+  if (scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+    if (pos == size) {
+      count += 2;
+    } else if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+      pos += 1;
+      count += 2;
+    }
+  }
+  return count +
+         scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+             in + pos, size - pos);
 }
 /* end file src/arm64/arm_convert_utf16_to_utf8.cpp */
 #endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF8
@@ -26269,6 +26528,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
     const char *input, size_t length) const noexcept {
   return utf8::utf16_length_from_utf8(input, length);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return arm64_utf8_length_from_utf16_with_replacement<endianness::LITTLE>(
+      input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return arm64_utf8_length_from_utf16_with_replacement<endianness::BIG>(input,
+                                                                        length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -27008,6 +27281,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
     const char *input, size_t length) const noexcept {
   return scalar::utf8::utf16_length_from_utf8(input, length);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::BIG>(input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -29314,89 +29601,268 @@ simdutf::result fast_avx512_convert_utf8_to_utf16_with_errors(const char *in,
 }
 /* end file src/icelake/icelake_convert_utf8_to_utf16.inl.cpp */
 /* begin file src/icelake/icelake_utf8_length_from_utf16.inl.cpp */
-// This is translation of `utf8_length_from_utf16_bytemask` from
-// `generic/utf16.h`
 template <endianness big_endian>
 simdutf_really_inline size_t icelake_utf8_length_from_utf16(const char16_t *in,
                                                             size_t size) {
-  size_t pos = 0;
 
   using vector_u16 = simd16<uint16_t>;
-  constexpr size_t N = vector_u16::ELEMENTS;
+  constexpr size_t N = vector_u16::ELEMENTS; // 32 on AVX-512
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+        in, size);
+  } // special case for short inputs
+  size_t pos = 0;
 
-  const auto one = vector_u16::splat(1);
+  const __m512i byteflip = _mm512_setr_epi64(
+      0x0607040502030001, 0x0e0f0c0d0a0b0809, 0x0607040502030001,
+      0x0e0f0c0d0a0b0809, 0x0607040502030001, 0x0e0f0c0d0a0b0809,
+      0x0607040502030001, 0x0e0f0c0d0a0b0809);
 
-  auto v_count = vector_u16::zero();
+  size_t count = 0;
 
-  // each char16 yields at least one byte
-  size_t count = size / N * N;
+  for (; pos < size / (2 * N) * (2 * N); pos += 2 * N) {
 
-  // in a single iteration the increment is 0, 1 or 2, despite we have
-  // three additions
-  constexpr size_t max_iterations = 65535 / 2;
-  size_t iteration = max_iterations;
+    __m512i input1 =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos));
+    __m512i input2 =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos + N));
 
-  for (; pos < size / N * N; pos += N) {
-    auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
     if (!match_system(big_endian)) {
-      input = input.swap_bytes();
+      input1 = _mm512_shuffle_epi8(input1, byteflip);
+      input2 = _mm512_shuffle_epi8(input2, byteflip);
     }
-
-    // not_surrogate[i] = non-zero if i-th element is not a surrogate word
-    const auto not_surrogate = (input & uint16_t(0xf800)) ^ uint16_t(0xd800);
-
-    // not_surrogate[i] = 1 if surrogate word, 0 otherwise
-    const auto is_surrogate = min(not_surrogate, one) ^ one;
-
+    // 0xd800 .. 0xdbff - low surrogate
+    // 0xdc00 .. 0xdfff - high surrogate
+    __mmask32 is_surrogate1 = _mm512_cmpeq_epi16_mask(
+        _mm512_and_si512(input1, _mm512_set1_epi16(uint16_t(0xf800))),
+        _mm512_set1_epi16(uint16_t(0xd800)));
+    __mmask32 is_surrogate2 = _mm512_cmpeq_epi16_mask(
+        _mm512_and_si512(input2, _mm512_set1_epi16(uint16_t(0xf800))),
+        _mm512_set1_epi16(uint16_t(0xd800)));
     // c0 - chars that yield 2- or 3-byte UTF-8 codes
-    const auto c0 = min(input & uint16_t(0xff80), one);
+    __mmask32 c01 =
+        _mm512_test_epi16_mask(input1, _mm512_set1_epi16(uint16_t(0xff80)));
+    __mmask32 c02 =
+        _mm512_test_epi16_mask(input2, _mm512_set1_epi16(uint16_t(0xff80)));
 
     // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
-    const auto c1 = min(input & uint16_t(0xf800), one);
+    __mmask32 c11 =
+        _mm512_test_epi16_mask(input1, _mm512_set1_epi16(uint16_t(0xf800)));
+    __mmask32 c12 =
+        _mm512_test_epi16_mask(input2, _mm512_set1_epi16(uint16_t(0xf800)));
+    count += count_ones32(c01);
+    count += count_ones32(c11);
+    count -= count_ones32(is_surrogate1);
+    count += count_ones32(c02);
+    count += count_ones32(c12);
+    count -= count_ones32(is_surrogate2);
+  }
+  if (pos + N <= size) {
+    __m512i input =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos));
+    if (!match_system(big_endian)) {
+      input = _mm512_shuffle_epi8(input, byteflip);
+    }
+    // 0xd800 .. 0xdbff - low surrogate
+    // 0xdc00 .. 0xdfff - high surrogate
+    __mmask32 is_surrogate = _mm512_cmpeq_epi16_mask(
+        _mm512_and_si512(input, _mm512_set1_epi16(uint16_t(0xf800))),
+        _mm512_set1_epi16(uint16_t(0xd800)));
 
-    /*
-        Explanation how the counting works.
+    // c0 - chars that yield 2- or 3-byte UTF-8 codes
+    __mmask32 c0 =
+        _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xff80)));
 
-        In the case of a non-surrogate character we count:
-        * always 1 -- see how `count` is initialized above;
-        * c0 = 1 if the current char yields 2 or 3 bytes;
-        * c1 = 1 if the current char yields 3 bytes.
+    // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
+    __mmask32 c1 =
+        _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xf800)));
+    count += count_ones32(c0);
+    count += count_ones32(c1);
+    count -= count_ones32(is_surrogate);
+    pos += N;
+  }
+  // At this point, we have processed 'pos' char16 values and we have less than
+  // N remaining.
+  __mmask32 remaining_mask =
+      0xFFFFFFFFULL >>
+      (32 - (size - pos)); // mask for the remaining char16 values
+  __m512i input = _mm512_maskz_loadu_epi16(remaining_mask, in + pos);
+  if (!match_system(big_endian)) {
+    input = _mm512_shuffle_epi8(input, byteflip);
+  }
+  // 0xd800 .. 0xdbff - low surrogate
+  // 0xdc00 .. 0xdfff - high surrogate
+  __mmask32 is_surrogate = _mm512_cmpeq_epi16_mask(
+      _mm512_and_si512(input, _mm512_set1_epi16(uint16_t(0xf800))),
+      _mm512_set1_epi16(uint16_t(0xd800)));
 
-        Thus, we always have correct count for the current char:
-        from 1, 2 or 3 bytes.
+  // c0 - chars that yield 2- or 3-byte UTF-8 codes
+  __mmask32 c0 =
+      _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xff80)));
 
-        A trickier part is how we count surrogate pairs. Whether
-        we encounter a surrogate (low or high), we count it as
-        3 chars and then minus 1 (`is_surrogate` is -1 or 0).
-        Each surrogate char yields 2. A surrogate pair, that
-        is a low surrogate followed by a high one, yields
-        the expected 4 bytes.
+  // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
+  __mmask32 c1 =
+      _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xf800)));
+  count += count_ones32(c0);
+  count += count_ones32(c1);
+  count -= count_ones32(is_surrogate);
+  pos = size;
 
-        It also correctly handles cases when low surrogate is
-        processed by the this loop, but high surrogate is counted
-        by the scalar procedure. The scalar procedure uses exactly
-        the described approach, thanks to that for valid UTF-16
-        strings it always count correctly.
-    */
-    v_count += c0;
-    v_count += c1;
-    v_count -= is_surrogate;
+  count += pos;
+  return count;
+}
 
-    iteration -= 1;
-    if (iteration == 0) {
-      count += v_count.sum();
-      v_count = vector_u16::zero();
+template <endianness big_endian>
+simdutf_really_inline size_t icelake_utf8_length_from_utf16_with_replacement(
+    const char16_t *in, size_t size) {
+  ///////
+  // We repeat 3 times the same algorithm.
+  // First, we proceed with an unrolled loop of 2*N char16 values (for speed).
+  // Second, we process N char16 values.
+  // Finally, we process the remaining char16 values (less than N).
+  ///////
+  using vector_u16 = simd16<uint16_t>;
+  constexpr size_t N = vector_u16::ELEMENTS; // 32 on AVX-512
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+        in, size);
+  } // special case for short inputs
+  size_t pos = 0;
 
-      iteration = max_iterations;
+  const __m512i byteflip = _mm512_setr_epi64(
+      0x0607040502030001, 0x0e0f0c0d0a0b0809, 0x0607040502030001,
+      0x0e0f0c0d0a0b0809, 0x0607040502030001, 0x0e0f0c0d0a0b0809,
+      0x0607040502030001, 0x0e0f0c0d0a0b0809);
+
+  const uint32_t straddle_mask =
+      match_system(big_endian) ? 0xfc00fc00 : 0x00fc00fc;
+  const uint32_t straddle_pair =
+      match_system(big_endian) ? 0xdc00d800 : 0x00dc00d8;
+
+  size_t count = 0;
+  // We assume all surrogates are mismatched and count here the matched
+  // ones.
+  size_t matches = 0;
+
+  for (; pos < (size - 1) / (2 * N) * (2 * N); pos += 2 * N) {
+    __m512i current1 =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos));
+    if (!match_system(big_endian)) {
+      current1 = _mm512_shuffle_epi8(current1, byteflip);
+    }
+    __m512i current2 =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos + N));
+    if (!match_system(big_endian)) {
+      current2 = _mm512_shuffle_epi8(current2, byteflip);
+    }
+
+    __mmask32 is_surrogate1 = _mm512_cmpeq_epi16_mask(
+        _mm512_and_si512(current1, _mm512_set1_epi16(uint16_t(0xf800))),
+        _mm512_set1_epi16(uint16_t(0xd800)));
+    __mmask32 is_surrogate2 = _mm512_cmpeq_epi16_mask(
+        _mm512_and_si512(current2, _mm512_set1_epi16(uint16_t(0xf800))),
+        _mm512_set1_epi16(uint16_t(0xd800)));
+    __mmask32 c01 =
+        _mm512_test_epi16_mask(current1, _mm512_set1_epi16(uint16_t(0xff80)));
+    __mmask32 c11 =
+        _mm512_test_epi16_mask(current1, _mm512_set1_epi16(uint16_t(0xf800)));
+    __mmask32 c02 =
+        _mm512_test_epi16_mask(current2, _mm512_set1_epi16(uint16_t(0xff80)));
+    __mmask32 c12 =
+        _mm512_test_epi16_mask(current2, _mm512_set1_epi16(uint16_t(0xf800)));
+    count += count_ones32(c01);
+    count += count_ones32(c11);
+    count += count_ones32(c02);
+    count += count_ones32(c12);
+    if (_kor_mask32(is_surrogate1, is_surrogate2)) {
+      __m512i lb_masked1 =
+          _mm512_and_si512(current1, _mm512_set1_epi16(uint16_t(0xfc00)));
+      __mmask32 hi_surrogates1 = _mm512_cmpeq_epi16_mask(
+          lb_masked1, _mm512_set1_epi16(uint16_t(0xd800)));
+      __mmask32 lo_surrogates1 = _mm512_cmpeq_epi16_mask(
+          lb_masked1, _mm512_set1_epi16(uint16_t(0xdc00)));
+      __m512i lb_masked2 =
+          _mm512_and_si512(current2, _mm512_set1_epi16(uint16_t(0xfc00)));
+      __mmask32 hi_surrogates2 = _mm512_cmpeq_epi16_mask(
+          lb_masked2, _mm512_set1_epi16(uint16_t(0xd800)));
+      __mmask32 lo_surrogates2 = _mm512_cmpeq_epi16_mask(
+          lb_masked2, _mm512_set1_epi16(uint16_t(0xdc00)));
+      matches += count_ones32(
+          _kand_mask32(_kshiftli_mask32(hi_surrogates1, 1), lo_surrogates1));
+      matches += count_ones32(
+          _kand_mask32(_kshiftli_mask32(hi_surrogates2, 1), lo_surrogates2));
+      uint32_t straddle1, straddle2;
+      memcpy(&straddle1, in + pos + 1 * N - 1, sizeof(uint32_t));
+      memcpy(&straddle2, in + pos + 2 * N - 1, sizeof(uint32_t));
+      matches += ((straddle1 & straddle_mask) == straddle_pair) +
+                 ((straddle2 & straddle_mask) == straddle_pair);
     }
   }
+  if (pos + N + 1 <= size) {
+    __m512i input =
+        _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos));
+    if (!match_system(big_endian)) {
+      input = _mm512_shuffle_epi8(input, byteflip);
+    }
 
-  if (iteration > 0) {
-    count += v_count.sum();
+    __mmask32 is_surrogate = _mm512_cmpeq_epi16_mask(
+        _mm512_and_si512(input, _mm512_set1_epi16(uint16_t(0xf800))),
+        _mm512_set1_epi16(uint16_t(0xd800)));
+    __mmask32 c0 =
+        _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xff80)));
+    __mmask32 c1 =
+        _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xf800)));
+    count += count_ones32(c0);
+    count += count_ones32(c1);
+    if (is_surrogate) {
+      __m512i lb_masked =
+          _mm512_and_si512(input, _mm512_set1_epi16(uint16_t(0xfc00)));
+      __mmask32 hi_surrogates = _mm512_cmpeq_epi16_mask(
+          lb_masked, _mm512_set1_epi16(uint16_t(0xd800)));
+      __mmask32 lo_surrogates = _mm512_cmpeq_epi16_mask(
+          lb_masked, _mm512_set1_epi16(uint16_t(0xdc00)));
+      matches += count_ones32(
+          _kand_mask32(_kshiftli_mask32(hi_surrogates, 1), lo_surrogates));
+      uint32_t straddle;
+      memcpy(&straddle, in + pos + N - 1, sizeof(uint32_t));
+      matches += (straddle & straddle_mask) == straddle_pair;
+    }
+    pos += N;
   }
 
-  return count + scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos,
-                                                                   size - pos);
+  size_t overshoot = 32 - (size - pos);
+  __mmask32 remaining_mask = 0xFFFFFFFFULL << overshoot;
+  __m512i input =
+      _mm512_maskz_loadu_epi16(remaining_mask, in + pos - overshoot);
+  if (!match_system(big_endian)) {
+    input = _mm512_shuffle_epi8(input, byteflip);
+  }
+
+  __mmask32 is_surrogate = _mm512_cmpeq_epi16_mask(
+      _mm512_and_si512(input, _mm512_set1_epi16(uint16_t(0xf800))),
+      _mm512_set1_epi16(uint16_t(0xd800)));
+  __mmask32 c0 =
+      _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xff80)));
+  __mmask32 c1 =
+      _mm512_test_epi16_mask(input, _mm512_set1_epi16(uint16_t(0xf800)));
+
+  count += count_ones32(c0);
+  count += count_ones32(c1);
+  if (is_surrogate) {
+    __m512i lb_masked =
+        _mm512_and_si512(input, _mm512_set1_epi16(uint16_t(0xfc00)));
+    __mmask32 hi_surrogates =
+        _mm512_cmpeq_epi16_mask(lb_masked, _mm512_set1_epi16(uint16_t(0xd800)));
+    __mmask32 lo_surrogates =
+        _mm512_cmpeq_epi16_mask(lb_masked, _mm512_set1_epi16(uint16_t(0xdc00)));
+    matches += count_ones32(
+        _kand_mask32(_kshiftli_mask32(hi_surrogates, 1), lo_surrogates));
+  }
+  pos = size;
+  count += pos;
+
+  count -= 2 * matches;
+  return count;
 }
 /* end file src/icelake/icelake_utf8_length_from_utf16.inl.cpp */
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
@@ -30840,7 +31306,6 @@ size_t encode_base64_impl(char *dst, const char *src, size_t srclen,
       base64_url
           ? "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
           : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-  uint8_t buffer[64]; // buffer for slow paths
   const __m512i shuffle_input = _mm512_setr_epi32(
       0x01020001, 0x04050304, 0x07080607, 0x0a0b090a, 0x0d0e0c0d, 0x10110f10,
       0x13141213, 0x16171516, 0x191a1819, 0x1c1d1b1c, 0x1f201e1f, 0x22232122,
@@ -30873,7 +31338,9 @@ size_t encode_base64_impl(char *dst, const char *src, size_t srclen,
           out += 65;
           offset = 64 - (line_length - offset);
         } else { // slow path
-          _mm512_storeu_epi8(buffer, result);
+          alignas(64) uint8_t local_buffer[64];
+          _mm512_storeu_si512(reinterpret_cast<__m512i *>(local_buffer),
+                              result);
           size_t out_pos = 0;
           size_t local_offset = offset;
           for (size_t j = 0; j < 64;) {
@@ -30881,7 +31348,7 @@ size_t encode_base64_impl(char *dst, const char *src, size_t srclen,
               out[out_pos++] = '\n';
               local_offset = 0;
             }
-            out[out_pos++] = buffer[j++];
+            out[out_pos++] = local_buffer[j++];
             local_offset++;
           }
           offset = local_offset;
@@ -30941,7 +31408,8 @@ size_t encode_base64_impl(char *dst, const char *src, size_t srclen,
           out += output_len + 1;
         }
       } else {
-        _mm512_storeu_si512(reinterpret_cast<__m512i *>(buffer), result);
+        alignas(64) uint8_t local_buffer[64];
+        _mm512_storeu_si512(reinterpret_cast<__m512i *>(local_buffer), result);
         size_t out_pos = 0;
         size_t local_offset = offset;
         for (size_t j = 0; j < output_len;) {
@@ -30949,7 +31417,7 @@ size_t encode_base64_impl(char *dst, const char *src, size_t srclen,
             out[out_pos++] = '\n';
             local_offset = 0;
           }
-          out[out_pos++] = buffer[j++];
+          out[out_pos++] = local_buffer[j++];
           local_offset++;
         }
         offset = local_offset;
@@ -33174,6 +33642,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
   return count +
          scalar::utf8::utf16_length_from_utf8(input + pos, length - pos);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return icelake_utf8_length_from_utf16_with_replacement<endianness::LITTLE>(
+      input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return icelake_utf8_length_from_utf16_with_replacement<endianness::BIG>(
+      input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 simdutf_warn_unused size_t implementation::utf8_length_from_utf32(
@@ -36346,7 +36828,7 @@ avx2_encode_base64_impl(char *dst, const char *src, size_t srclen,
         }
       } else { // slow path
         // could be optimized
-        uint8_t buffer[32];
+        alignas(32) uint8_t buffer[32];
         _mm256_storeu_si256(reinterpret_cast<__m256i *>(buffer),
                             lookup_pshufb_improved<isbase64url>(indices));
         std::memcpy(out, buffer, 32);
@@ -36456,7 +36938,7 @@ simdutf_really_inline void base64_decode_block_safe(char *out,
                                                     const char *src) {
   base64_decode(out,
                 _mm256_loadu_si256(reinterpret_cast<const __m256i *>(src)));
-  char buffer[32]; // We enforce safety with a buffer.
+  alignas(32) char buffer[32]; // We enforce safety with a buffer.
   base64_decode(
       buffer, _mm256_loadu_si256(reinterpret_cast<const __m256i *>(src + 32)));
   std::memcpy(out + 24, buffer, 24);
@@ -36508,7 +36990,7 @@ public:
 
   simdutf_really_inline void base64_decode_block_safe(char *out) {
     base64_decode(out, chunks[0]);
-    char buffer[32]; // We enforce safety with a buffer.
+    alignas(32) char buffer[32]; // We enforce safety with a buffer.
     base64_decode(buffer, chunks[1]);
     std::memcpy(out + 24, buffer, 24);
   }
@@ -38456,6 +38938,117 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
 
   return count + scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos,
                                                                    size - pos);
+}
+
+template <endianness big_endian>
+simdutf_really_inline size_t
+utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
+  using vector_u16 = simd16<uint16_t>;
+  constexpr size_t N = vector_u16::ELEMENTS;
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+        in, size);
+  } // special case for short inputs
+  size_t pos = 0;
+
+  const auto one = vector_u16::splat(1);
+
+  auto v_count = vector_u16::zero();
+  auto v_mismatched_count = vector_u16::zero();
+
+  size_t count = 0;
+  size_t mismatched_count = 0;
+
+  // in a single iteration the increment is 0, 1 or 2, despite we have
+  // three additions
+  constexpr size_t max_iterations = 65535 / 2;
+  size_t iteration = max_iterations;
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[0])) {
+    mismatched_count += 1;
+  }
+
+  for (; pos < (size - 1) / N * N; pos += N) {
+    auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
+    if (!match_system(big_endian)) {
+      input = input.swap_bytes();
+    }
+    // 0xd800 .. 0xdbff - low surrogate
+    // 0xdc00 .. 0xdfff - high surrogate
+    const auto is_surrogate = ((input & uint16_t(0xf800)) == uint16_t(0xd800));
+
+    // c0 - chars that yield 2- or 3-byte UTF-8 codes
+    const auto c0 = min(input & uint16_t(0xff80), one);
+
+    // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
+    const auto c1 = min(input & uint16_t(0xf800), one);
+
+    v_count += c0;
+    v_count += c1;
+    v_count += vector_u16(is_surrogate);
+    //
+    // In theory, we should go faster by avoiding the cost of the coming
+    // branch when there is no surrogate. However, the benefit in practice
+    // are unclear.
+    // This should be revisited in the future for better performance.
+    // It might be possible to batch several iterations together to make
+    // this check worth it.
+    // if(is_surrogate.to_bitmask() != 0 ||
+    // scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    //
+    if (true) { // deliberately always true
+      auto input_next =
+          vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
+      if (!match_system(big_endian)) {
+        input_next = input_next.swap_bytes();
+      }
+
+      const auto lb_masked = input & (0xfc00);
+      const auto block_masked = input_next & (0xfc00);
+
+      const auto lb_is_high = lb_masked == (0xd800);
+      const auto block_is_low = block_masked == (0xdc00);
+
+      const auto illseq = min(vector_u16(lb_is_high ^ block_is_low), one);
+
+      v_mismatched_count += illseq;
+    }
+
+    iteration -= 1;
+    if (iteration == 0) {
+      count += v_count.sum();
+      v_count = vector_u16::zero();
+      mismatched_count += v_mismatched_count.sum();
+      v_mismatched_count = vector_u16::zero();
+      iteration = max_iterations;
+    }
+  }
+
+  if (iteration > 0) {
+    count += v_count.sum();
+    mismatched_count += v_mismatched_count.sum();
+  }
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    if (!scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+      mismatched_count -= 1;
+      count += 2;
+      pos += 1;
+    }
+  }
+  count += pos;
+  count += mismatched_count;
+  if (scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+    if (pos == size) {
+      count += 2;
+    } else if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+      pos += 1;
+      count += 2;
+    }
+  }
+  return count +
+         scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+             in + pos, size - pos);
 }
 
 } // namespace utf16
@@ -40462,6 +41055,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
     const char *input, size_t length) const noexcept {
   return utf8::utf16_length_from_utf8_bytemask(input, length);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16_with_replacement<endianness::LITTLE>(
+      input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16_with_replacement<endianness::BIG>(
+      input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
@@ -47067,6 +47674,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
     const char *input, size_t length) const noexcept {
   return utf8::utf16_length_from_utf8(input, length);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::BIG>(input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -49207,6 +49828,22 @@ size_t implementation::binary_to_base64_with_lines(
                                                        options, line_length);
 }
 #endif // SIMDUTF_FEATURE_BASE64
+#if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::BIG>(input, length);
+}
+
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 } // namespace rvv
 } // namespace simdutf
@@ -51909,7 +52546,7 @@ size_t encode_base64_impl(char *dst, const char *src, size_t srclen,
         }
       } else { // slow path
         // could be optimized
-        uint8_t buffer[64];
+        alignas(64) uint8_t buffer[64];
         _mm_storeu_si128(reinterpret_cast<__m128i *>(buffer), t0);
         _mm_storeu_si128(reinterpret_cast<__m128i *>(buffer + 16), t1);
         _mm_storeu_si128(reinterpret_cast<__m128i *>(buffer + 32), t2);
@@ -54085,6 +54722,117 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
                                                                    size - pos);
 }
 
+template <endianness big_endian>
+simdutf_really_inline size_t
+utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
+  using vector_u16 = simd16<uint16_t>;
+  constexpr size_t N = vector_u16::ELEMENTS;
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+        in, size);
+  } // special case for short inputs
+  size_t pos = 0;
+
+  const auto one = vector_u16::splat(1);
+
+  auto v_count = vector_u16::zero();
+  auto v_mismatched_count = vector_u16::zero();
+
+  size_t count = 0;
+  size_t mismatched_count = 0;
+
+  // in a single iteration the increment is 0, 1 or 2, despite we have
+  // three additions
+  constexpr size_t max_iterations = 65535 / 2;
+  size_t iteration = max_iterations;
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[0])) {
+    mismatched_count += 1;
+  }
+
+  for (; pos < (size - 1) / N * N; pos += N) {
+    auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
+    if (!match_system(big_endian)) {
+      input = input.swap_bytes();
+    }
+    // 0xd800 .. 0xdbff - low surrogate
+    // 0xdc00 .. 0xdfff - high surrogate
+    const auto is_surrogate = ((input & uint16_t(0xf800)) == uint16_t(0xd800));
+
+    // c0 - chars that yield 2- or 3-byte UTF-8 codes
+    const auto c0 = min(input & uint16_t(0xff80), one);
+
+    // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
+    const auto c1 = min(input & uint16_t(0xf800), one);
+
+    v_count += c0;
+    v_count += c1;
+    v_count += vector_u16(is_surrogate);
+    //
+    // In theory, we should go faster by avoiding the cost of the coming
+    // branch when there is no surrogate. However, the benefit in practice
+    // are unclear.
+    // This should be revisited in the future for better performance.
+    // It might be possible to batch several iterations together to make
+    // this check worth it.
+    // if(is_surrogate.to_bitmask() != 0 ||
+    // scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    //
+    if (true) { // deliberately always true
+      auto input_next =
+          vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
+      if (!match_system(big_endian)) {
+        input_next = input_next.swap_bytes();
+      }
+
+      const auto lb_masked = input & (0xfc00);
+      const auto block_masked = input_next & (0xfc00);
+
+      const auto lb_is_high = lb_masked == (0xd800);
+      const auto block_is_low = block_masked == (0xdc00);
+
+      const auto illseq = min(vector_u16(lb_is_high ^ block_is_low), one);
+
+      v_mismatched_count += illseq;
+    }
+
+    iteration -= 1;
+    if (iteration == 0) {
+      count += v_count.sum();
+      v_count = vector_u16::zero();
+      mismatched_count += v_mismatched_count.sum();
+      v_mismatched_count = vector_u16::zero();
+      iteration = max_iterations;
+    }
+  }
+
+  if (iteration > 0) {
+    count += v_count.sum();
+    mismatched_count += v_mismatched_count.sum();
+  }
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    if (!scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+      mismatched_count -= 1;
+      count += 2;
+      pos += 1;
+    }
+  }
+  count += pos;
+  count += mismatched_count;
+  if (scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+    if (pos == size) {
+      count += 2;
+    } else if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+      pos += 1;
+      count += 2;
+    }
+  }
+  return count +
+         scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+             in + pos, size - pos);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace westmere
@@ -56179,6 +56927,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
     const char *input, size_t length) const noexcept {
   return utf8::utf16_length_from_utf8_bytemask(input, length);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16_with_replacement<endianness::LITTLE>(
+      input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16_with_replacement<endianness::BIG>(
+      input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -61386,6 +62148,117 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
                                                                    size - pos);
 }
 
+template <endianness big_endian>
+simdutf_really_inline size_t
+utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
+  using vector_u16 = simd16<uint16_t>;
+  constexpr size_t N = vector_u16::ELEMENTS;
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+        in, size);
+  } // special case for short inputs
+  size_t pos = 0;
+
+  const auto one = vector_u16::splat(1);
+
+  auto v_count = vector_u16::zero();
+  auto v_mismatched_count = vector_u16::zero();
+
+  size_t count = 0;
+  size_t mismatched_count = 0;
+
+  // in a single iteration the increment is 0, 1 or 2, despite we have
+  // three additions
+  constexpr size_t max_iterations = 65535 / 2;
+  size_t iteration = max_iterations;
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[0])) {
+    mismatched_count += 1;
+  }
+
+  for (; pos < (size - 1) / N * N; pos += N) {
+    auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
+    if (!match_system(big_endian)) {
+      input = input.swap_bytes();
+    }
+    // 0xd800 .. 0xdbff - low surrogate
+    // 0xdc00 .. 0xdfff - high surrogate
+    const auto is_surrogate = ((input & uint16_t(0xf800)) == uint16_t(0xd800));
+
+    // c0 - chars that yield 2- or 3-byte UTF-8 codes
+    const auto c0 = min(input & uint16_t(0xff80), one);
+
+    // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
+    const auto c1 = min(input & uint16_t(0xf800), one);
+
+    v_count += c0;
+    v_count += c1;
+    v_count += vector_u16(is_surrogate);
+    //
+    // In theory, we should go faster by avoiding the cost of the coming
+    // branch when there is no surrogate. However, the benefit in practice
+    // are unclear.
+    // This should be revisited in the future for better performance.
+    // It might be possible to batch several iterations together to make
+    // this check worth it.
+    // if(is_surrogate.to_bitmask() != 0 ||
+    // scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    //
+    if (true) { // deliberately always true
+      auto input_next =
+          vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
+      if (!match_system(big_endian)) {
+        input_next = input_next.swap_bytes();
+      }
+
+      const auto lb_masked = input & (0xfc00);
+      const auto block_masked = input_next & (0xfc00);
+
+      const auto lb_is_high = lb_masked == (0xd800);
+      const auto block_is_low = block_masked == (0xdc00);
+
+      const auto illseq = min(vector_u16(lb_is_high ^ block_is_low), one);
+
+      v_mismatched_count += illseq;
+    }
+
+    iteration -= 1;
+    if (iteration == 0) {
+      count += v_count.sum();
+      v_count = vector_u16::zero();
+      mismatched_count += v_mismatched_count.sum();
+      v_mismatched_count = vector_u16::zero();
+      iteration = max_iterations;
+    }
+  }
+
+  if (iteration > 0) {
+    count += v_count.sum();
+    mismatched_count += v_mismatched_count.sum();
+  }
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    if (!scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+      mismatched_count -= 1;
+      count += 2;
+      pos += 1;
+    }
+  }
+  count += pos;
+  count += mismatched_count;
+  if (scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+    if (pos == size) {
+      count += 2;
+    } else if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+      pos += 1;
+      count += 2;
+    }
+  }
+  return count +
+         scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+             in + pos, size - pos);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace lsx
@@ -62783,6 +63656,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
     const char *input, size_t length) const noexcept {
   return utf8::utf16_length_from_utf8_bytemask(input, length);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::BIG>(input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -66120,7 +67007,7 @@ static inline void base64_decode_block(char *out, const char *src) {
 
 static inline void base64_decode_block_safe(char *out, const char *src) {
   base64_decode(out, __lasx_xvld(reinterpret_cast<const __m256i *>(src), 0));
-  char buffer[32];
+  alignas(32) char buffer[32];
   base64_decode(buffer,
                 __lasx_xvld(reinterpret_cast<const __m256i *>(src), 32));
   std::memcpy(out + 24, buffer, 24);
@@ -66132,7 +67019,7 @@ static inline void base64_decode_block(char *out, block64 *b) {
 }
 static inline void base64_decode_block_safe(char *out, block64 *b) {
   base64_decode(out, b->chunks[0]);
-  char buffer[32];
+  alignas(32) char buffer[32];
   base64_decode(buffer, b->chunks[1]);
   std::memcpy(out + 24, buffer, 24);
 }
@@ -68387,6 +69274,117 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
                                                                    size - pos);
 }
 
+template <endianness big_endian>
+simdutf_really_inline size_t
+utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
+  using vector_u16 = simd16<uint16_t>;
+  constexpr size_t N = vector_u16::ELEMENTS;
+  if (N + 1 > size) {
+    return scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+        in, size);
+  } // special case for short inputs
+  size_t pos = 0;
+
+  const auto one = vector_u16::splat(1);
+
+  auto v_count = vector_u16::zero();
+  auto v_mismatched_count = vector_u16::zero();
+
+  size_t count = 0;
+  size_t mismatched_count = 0;
+
+  // in a single iteration the increment is 0, 1 or 2, despite we have
+  // three additions
+  constexpr size_t max_iterations = 65535 / 2;
+  size_t iteration = max_iterations;
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[0])) {
+    mismatched_count += 1;
+  }
+
+  for (; pos < (size - 1) / N * N; pos += N) {
+    auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
+    if (!match_system(big_endian)) {
+      input = input.swap_bytes();
+    }
+    // 0xd800 .. 0xdbff - low surrogate
+    // 0xdc00 .. 0xdfff - high surrogate
+    const auto is_surrogate = ((input & uint16_t(0xf800)) == uint16_t(0xd800));
+
+    // c0 - chars that yield 2- or 3-byte UTF-8 codes
+    const auto c0 = min(input & uint16_t(0xff80), one);
+
+    // c1 - chars that yield 3-byte UTF-8 codes (including surrogates)
+    const auto c1 = min(input & uint16_t(0xf800), one);
+
+    v_count += c0;
+    v_count += c1;
+    v_count += vector_u16(is_surrogate);
+    //
+    // In theory, we should go faster by avoiding the cost of the coming
+    // branch when there is no surrogate. However, the benefit in practice
+    // are unclear.
+    // This should be revisited in the future for better performance.
+    // It might be possible to batch several iterations together to make
+    // this check worth it.
+    // if(is_surrogate.to_bitmask() != 0 ||
+    // scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    //
+    if (true) { // deliberately always true
+      auto input_next =
+          vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
+      if (!match_system(big_endian)) {
+        input_next = input_next.swap_bytes();
+      }
+
+      const auto lb_masked = input & (0xfc00);
+      const auto block_masked = input_next & (0xfc00);
+
+      const auto lb_is_high = lb_masked == (0xd800);
+      const auto block_is_low = block_masked == (0xdc00);
+
+      const auto illseq = min(vector_u16(lb_is_high ^ block_is_low), one);
+
+      v_mismatched_count += illseq;
+    }
+
+    iteration -= 1;
+    if (iteration == 0) {
+      count += v_count.sum();
+      v_count = vector_u16::zero();
+      mismatched_count += v_mismatched_count.sum();
+      v_mismatched_count = vector_u16::zero();
+      iteration = max_iterations;
+    }
+  }
+
+  if (iteration > 0) {
+    count += v_count.sum();
+    mismatched_count += v_mismatched_count.sum();
+  }
+
+  if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+    if (!scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+      mismatched_count -= 1;
+      count += 2;
+      pos += 1;
+    }
+  }
+  count += pos;
+  count += mismatched_count;
+  if (scalar::utf16::is_high_surrogate<big_endian>(in[pos - 1])) {
+    if (pos == size) {
+      count += 2;
+    } else if (scalar::utf16::is_low_surrogate<big_endian>(in[pos])) {
+      pos += 1;
+      count += 2;
+    }
+  }
+  return count +
+         scalar::utf16::utf8_length_from_utf16_with_replacement<big_endian>(
+             in + pos, size - pos);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace lasx
@@ -69897,6 +70895,20 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
     const char *input, size_t length) const noexcept {
   return utf8::utf16_length_from_utf8_bytemask(input, length);
 }
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t
+implementation::utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16_with_replacement<
+      endianness::BIG>(input, length);
+}
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32

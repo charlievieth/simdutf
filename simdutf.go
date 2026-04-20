@@ -4,6 +4,8 @@
 // [simdutf]: https://github.com/simdutf/simdutf/
 package simdutf
 
+// test test test
+
 // #cgo CFLAGS: -O2 -g
 //
 // #cgo noescape validate_ascii

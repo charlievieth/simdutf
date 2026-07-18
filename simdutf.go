@@ -5,6 +5,7 @@
 package simdutf
 
 // #cgo CFLAGS: -O2 -g
+// #cgo CXXFLAGS: -std=c++17
 //
 // #cgo noescape validate_ascii
 // #cgo nocallback validate_ascii

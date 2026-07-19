@@ -4,6 +4,8 @@
 // [simdutf]: https://github.com/simdutf/simdutf/
 package simdutf
 
+// test test test
+
 // #cgo CFLAGS: -O2 -g
 // #cgo CXXFLAGS: -std=c++17
 //
